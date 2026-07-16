@@ -641,16 +641,28 @@
     .home-panel { height: auto; min-height: 100vh; }
     .home-top { flex: none; height: 80vh; padding: 6rem 0 1.5rem; }
     .home-grid { height: auto; margin: 0; overflow: visible; }
+    /* Carosello scorrevole col dito: scroll orizzontale nativo con snap */
     .home-track {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 12px;
-      width: 100%;
+      width: auto;
       animation: none;
       transform: none;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .home-track::-webkit-scrollbar { display: none; }
     .home-track .clone { display: none; }
-    .home-grid-item { width: auto; margin-right: 0; aspect-ratio: 3 / 2; height: auto; }
+    .home-grid-item {
+      flex: 0 0 80%;
+      width: auto;
+      margin-right: 0;
+      aspect-ratio: 3 / 2;
+      height: auto;
+      scroll-snap-align: center;
+    }
   }
 
   @media (max-width: 1000px) {
@@ -1078,6 +1090,40 @@
 
   menuToggle.addEventListener('click', () => mobileMenu.classList.add('open'));
   mobileMenuClose.addEventListener('click', closeMobileMenu);
+
+  // Swipe orizzontale tra progetti (solo mobile). Swipe a sinistra -> progetto
+  // successivo, a destra -> precedente. Attivo solo se si è su una pagina
+  // progetto e il gesto è chiaramente orizzontale (non uno scroll verticale).
+  const SWIPE_ORDER = ['dual', 'multiservice', 'fastpay', 'legal'];
+  let swStartX = 0, swStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    swStartX = e.touches[0].clientX;
+    swStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (window.innerWidth > 1000) return;                 // solo mobile
+    if (mobileMenu.classList.contains('open')) return;
+    if (contactMenu.classList.contains('open')) return;
+
+    const active = document.querySelector('.project-panel.active');
+    const idx = active ? SWIPE_ORDER.indexOf(active.id) : -1;
+    if (idx === -1) return;                               // non su una pagina progetto
+
+    const t = e.changedTouches[0];
+    const dx = t.clientX - swStartX;
+    const dy = t.clientY - swStartY;
+    if (Math.abs(dx) < 60) return;                        // gesto troppo corto
+    if (Math.abs(dx) < Math.abs(dy) * 1.5) return;        // deve essere orizzontale
+
+    if (dx < 0 && idx < SWIPE_ORDER.length - 1) {
+      activateProject(SWIPE_ORDER[idx + 1]);
+    } else if (dx > 0 && idx > 0) {
+      activateProject(SWIPE_ORDER[idx - 1]);
+    }
+  }, { passive: true });
 
   // Collapse-on-scroll con isteresi: collassa facilmente scrollando in giù,
   // ma espande solo con uno scroll verso l'alto deciso. Così il piccolo
