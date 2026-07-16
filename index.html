@@ -638,31 +638,9 @@
   }
 
   @media (max-width: 1000px) {
-    .home-panel { height: auto; min-height: 100vh; }
-    .home-top { flex: none; height: 80vh; padding: 6rem 0 1.5rem; }
-    .home-grid { height: auto; margin: 0; overflow: visible; }
-    /* Carosello scorrevole col dito: scroll orizzontale nativo con snap */
-    .home-track {
-      display: flex;
-      gap: 12px;
-      width: auto;
-      animation: none;
-      transform: none;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .home-track::-webkit-scrollbar { display: none; }
-    .home-track .clone { display: none; }
-    .home-grid-item {
-      flex: 0 0 80%;
-      width: auto;
-      margin-right: 0;
-      aspect-ratio: 3 / 2;
-      height: auto;
-      scroll-snap-align: center;
-    }
+    .home-panel { height: 100vh; min-height: 100vh; padding: 0 16px; }
+    .home-top { flex: 1; height: auto; padding: 1.5rem 0 5rem; }
+    .home-grid { display: none; }   /* niente marquee su mobile */
   }
 
   @media (max-width: 1000px) {
@@ -672,7 +650,8 @@
 
   @media (max-width: 1000px) {
     .topnav {
-      top: 16px;
+      top: auto;
+      bottom: 16px;
       left: 16px;
       right: 16px;
       transform: none;
@@ -682,6 +661,8 @@
       gap: 0.1rem;
     }
     .contact-menu { min-width: 220px; }
+    /* alza l'hint "Scorri" sopra la navbar in basso */
+    .scroll-hint { bottom: 6.5rem; }
     .hero-content { padding: 2rem 1.6rem; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
@@ -1094,7 +1075,7 @@
   // Swipe orizzontale tra progetti (solo mobile). Swipe a sinistra -> progetto
   // successivo, a destra -> precedente. Attivo solo se si è su una pagina
   // progetto e il gesto è chiaramente orizzontale (non uno scroll verticale).
-  const SWIPE_ORDER = ['dual', 'multiservice', 'fastpay', 'legal'];
+  const SWIPE_ORDER = ['home', 'dual', 'multiservice', 'fastpay', 'legal'];
   let swStartX = 0, swStartY = 0;
 
   document.addEventListener('touchstart', (e) => {
