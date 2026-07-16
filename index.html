@@ -743,15 +743,10 @@
     .nav-item .nav-label { display: none; }
     .nav-item .nav-icon { display: block; }
     .nav-item[data-target="contatti"] { display: none; }
-    /* pill bianco dietro l'icona attiva: la fa risaltare quando l'hero
-       ha lo stesso colore dell'icona e la navbar è trasparente */
-    .nav-item.active { background: rgba(255, 255, 255, 0.92); }
-
-    /* Icona attiva colorata col colore del progetto */
-    .nav-item[data-target="dual"].active { color: var(--c-dual); }
-    .nav-item[data-target="multiservice"].active { color: var(--c-multiservice); }
-    .nav-item[data-target="fastpay"].active { color: var(--c-fastpay); }
-    .nav-item[data-target="legal"].active { color: var(--c-legal); }
+    .nav-item.active { background: none; }
+    /* icona bianca: opaca al 75% se non attiva, piena (100%) se attiva */
+    .nav-item .nav-icon { opacity: 0.75; }
+    .nav-item.active .nav-icon { opacity: 1; }
   }
 
   @media (max-width: 1000px) {
