@@ -762,8 +762,12 @@
       gap: 0.1rem;
     }
     .contact-menu { min-width: 220px; }
-    /* alza l'hint "Scorri" sopra la navbar in basso */
-    .scroll-hint { bottom: 6.5rem; }
+    /* su mobile: solo chevron-down (niente testo), più in alto per non
+       finire sotto la navbar in basso; stessa animazione bounce del desktop */
+    .scroll-hint { bottom: 9rem; }
+    .scroll-hint-label { display: none; }
+    .scroll-hint-arrow { width: 28px; height: 28px; }
+    .scroll-hint-arrow line { display: none; }   /* nasconde l'asta -> chevron */
     .hero-content { padding: 2rem 1.6rem; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
