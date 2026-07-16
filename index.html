@@ -300,9 +300,11 @@
     transition: background-color .15s ease, color .15s ease;
   }
 
-  .contact-row:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+  @media (hover: hover) {
+    .contact-row:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
   }
 
   .contact-row svg { flex-shrink: 0; }
@@ -585,6 +587,16 @@
     .project-row { flex-direction: column; gap: 0.3rem; }
     .project-row-label { flex: none; }
     .gallery { grid-template-columns: 1fr; }
+
+    .contatti-page-inner { max-width: none; padding: 16px; }
+    .contatti-page .contact-row {
+      font-size: 1.25rem;
+      padding: 1.1rem 1rem;
+    }
+    .contatti-page .contact-row svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 </style>
 </head>
