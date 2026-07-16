@@ -165,6 +165,82 @@
     background: rgba(255, 255, 255, 0.16);
   }
 
+  /* Icone SVG dei progetti: nascoste su desktop, mostrate su mobile */
+  .nav-icon {
+    display: none;
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Bottone Contatti in alto a destra + modale full screen (solo mobile) */
+  .contact-fab {
+    display: none;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 100;
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(78, 75, 69, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .contact-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--ink);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease, visibility .3s ease;
+  }
+
+  .contact-modal.open { opacity: 1; visibility: visible; }
+
+  .contact-modal-close {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 0.5rem;
+    line-height: 0;
+    cursor: pointer;
+  }
+
+  .contact-modal-inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.4rem;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .contact-modal-inner .contact-name {
+    font-size: 1.4rem;
+    padding: 0.6rem 1rem 1rem;
+  }
+
+  .contact-modal-inner .contact-row {
+    font-size: 1.25rem;
+    padding: 1.1rem 1rem;
+  }
+
+  .contact-modal-inner .contact-row svg { width: 24px; height: 24px; }
+
   /* ---------- Mobile menu toggle + fullscreen menu ---------- */
   .menu-toggle {
     display: none;
@@ -644,8 +720,36 @@
   }
 
   @media (max-width: 1000px) {
-    .nav-items { display: none; }
-    .menu-toggle { display: flex; }
+    /* Tab a icone nella bottom bar (niente hamburger, niente Contatti qui) */
+    .menu-toggle { display: none; }
+    .contact-fab { display: block; }
+
+    .nav-items {
+      display: flex;
+      flex: 1;
+      margin-left: 0.4rem;
+      overflow: visible;
+    }
+    .nav-items-inner {
+      flex: 1;
+      justify-content: space-around;
+    }
+    .nav-item {
+      max-width: none;
+      margin-left: 0;
+      padding: 0.5rem;
+      color: #fff;
+    }
+    .nav-item .nav-label { display: none; }
+    .nav-item .nav-icon { display: block; }
+    .nav-item[data-target="contatti"] { display: none; }
+    .nav-item.active { background: none; }
+
+    /* Icona attiva colorata col colore del progetto */
+    .nav-item[data-target="dual"].active { color: var(--c-dual); }
+    .nav-item[data-target="multiservice"].active { color: var(--c-multiservice); }
+    .nav-item[data-target="fastpay"].active { color: var(--c-fastpay); }
+    .nav-item[data-target="legal"].active { color: var(--c-legal); }
   }
 
   @media (max-width: 1000px) {
@@ -690,17 +794,44 @@
   </button>
   <div class="nav-items">
     <div class="nav-items-inner">
-      <button class="nav-item" data-target="dual">Dual Finance</button>
-      <button class="nav-item" data-target="multiservice">MultiService</button>
-      <button class="nav-item" data-target="fastpay">FastPay</button>
-      <button class="nav-item" data-target="legal">Legal AI</button>
-      <button class="nav-item" data-target="contatti">Contatti</button>
+      <button class="nav-item" data-target="dual" aria-label="Dual Finance"><span class="nav-label">Dual Finance</span><svg class="nav-icon" viewBox="0 0 384 385" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 365C0 376.046 8.95431 385 20 385H192C298.039 385 384 298.815 384 192.5C384 86.1852 298.039 0 192 0H20C8.95431 0 0 8.95431 0 20V365Z"/></svg></button>
+      <button class="nav-item" data-target="multiservice" aria-label="MultiService"><span class="nav-label">MultiService</span><svg class="nav-icon" viewBox="0 0 522 384" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M520.399 355.732C525.908 368.908 516.228 383.445 501.947 383.445H20.022C5.74049 383.445 -3.93879 368.908 1.56932 355.732L145.136 12.2894C151.707 -3.43011 173.668 -4.25982 181.407 10.9191L243.166 132.057C250.586 146.612 271.382 146.612 278.802 132.058L340.563 10.9186C348.301 -4.26016 370.262 -3.43033 376.833 12.2892L520.399 355.732Z"/></svg></button>
+      <button class="nav-item" data-target="fastpay" aria-label="FastPay"><span class="nav-label">FastPay</span><svg class="nav-icon" viewBox="0 0 385 385" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M385 145C385 156.046 376.046 165 365 165H340C334.477 165 330 169.477 330 175C330 180.523 334.477 185 340 185H365C376.046 185 385 193.954 385 205V317C385 328.046 376.046 337 365 337H350C338.954 337 330 345.954 330 357V365C330 376.046 321.046 385 310 385H20C8.95431 385 0 376.046 0 365V20C0 8.95431 8.95431 0 20 0H365C376.046 0 385 8.95431 385 20V145Z"/></svg></button>
+      <button class="nav-item" data-target="legal" aria-label="Legal AI"><span class="nav-label">Legal AI</span><svg class="nav-icon" viewBox="0 0 385 385" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M275 0C286.046 0 295 8.95431 295 20V70C295 81.0457 303.954 90 315 90H365C376.046 90 385 98.9543 385 110V365C385 376.046 376.046 385 365 385H20C8.95431 385 0 376.046 0 365V20C0 8.95431 8.95431 0 20 0H275Z"/></svg></button>
+      <button class="nav-item" data-target="contatti"><span class="nav-label">Contatti</span></button>
     </div>
   </div>
   <button class="menu-toggle" id="menuToggle" aria-label="Apri menu">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
   </button>
 </nav>
+
+<!-- Bottone Contatti in alto a destra (solo mobile) -->
+<button class="contact-fab" id="contactFab">Contatti</button>
+
+<!-- Modale contatti full screen (mobile) -->
+<div class="contact-modal" id="contactModal" aria-hidden="true">
+  <button class="contact-modal-close" id="contactModalClose" aria-label="Chiudi">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
+  </button>
+  <div class="contact-modal-inner">
+    <div class="contact-name">Giulio Barboni</div>
+    <button class="contact-row" data-copy="giu.barboni@gmail.com">
+      <span>giu.barboni@gmail.com</span>
+      <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </button>
+    <button class="contact-row" data-copy="331 7548002">
+      <span>331 7548002</span>
+      <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      <svg class="icon-check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </button>
+    <a class="contact-row" href="https://giubarboni.github.io/cv/">
+      <span>Curriculum Vitae</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+    </a>
+  </div>
+</div>
 
 <div class="mobile-menu" id="mobileMenu">
   <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Chiudi menu">
@@ -1061,6 +1192,24 @@
     });
   });
 
+  // Bottone Contatti (mobile) -> modale full screen
+  const contactFab = document.getElementById('contactFab');
+  const contactModal = document.getElementById('contactModal');
+  const contactModalClose = document.getElementById('contactModalClose');
+
+  function openContactModal() {
+    contactModal.classList.add('open');
+    contactModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeContactModal() {
+    contactModal.classList.remove('open');
+    contactModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  contactFab.addEventListener('click', openContactModal);
+  contactModalClose.addEventListener('click', closeContactModal);
+
   const menuToggle = document.getElementById('menuToggle');
   const mobileMenu = document.getElementById('mobileMenu');
   const mobileMenuClose = document.getElementById('mobileMenuClose');
@@ -1116,6 +1265,12 @@
   const EXPAND_AFTER = 44;    // px in su per espandere (ignora il rimbalzo d'inerzia)
 
   window.addEventListener('scroll', () => {
+    // Su mobile la navbar è una bottom-bar a icone: non collassa mai.
+    if (window.innerWidth <= 1000) {
+      if (topnav.classList.contains('collapsed')) topnav.classList.remove('collapsed');
+      return;
+    }
+
     const currentY = window.scrollY;
 
     if (currentY <= 80) {
