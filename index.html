@@ -743,7 +743,9 @@
     .nav-item .nav-label { display: none; }
     .nav-item .nav-icon { display: block; }
     .nav-item[data-target="contatti"] { display: none; }
-    .nav-item.active { background: none; }
+    /* pill bianco dietro l'icona attiva: la fa risaltare quando l'hero
+       ha lo stesso colore dell'icona e la navbar è trasparente */
+    .nav-item.active { background: rgba(255, 255, 255, 0.92); }
 
     /* Icona attiva colorata col colore del progetto */
     .nav-item[data-target="dual"].active { color: var(--c-dual); }
