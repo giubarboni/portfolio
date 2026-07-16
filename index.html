@@ -139,7 +139,7 @@
     align-items: center;
     gap: 0.5rem;
     margin-left: 0.2rem;
-    max-width: 150px;
+    max-width: var(--nav-w, 150px);
     overflow: hidden;
     background: none;
     border: none;
@@ -1000,6 +1000,22 @@
   const topnav = document.querySelector('.topnav');
   const contactBtn = document.querySelector('.nav-item[data-target="contatti"]');
   const contactMenu = document.getElementById('contactMenu');
+
+  // Calibra la max-width di ogni tab sulla sua larghezza reale, così il
+  // collasso della navbar anima max-width -> 0 senza "zona morta" (nessuno
+  // scatto): tutte le tab si restringono in modo uniforme e lineare.
+  function calibrateNavWidths() {
+    navItems.forEach(el => {
+      el.style.removeProperty('--nav-w');
+      const w = el.getBoundingClientRect().width;
+      if (w > 0) el.style.setProperty('--nav-w', Math.ceil(w) + 1 + 'px');
+    });
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(calibrateNavWidths);
+  } else {
+    window.addEventListener('load', calibrateNavWidths);
+  }
 
   function activateProject(target) {
     allProjectTriggers.forEach(b => b.classList.remove('active'));
