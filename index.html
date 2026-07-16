@@ -40,6 +40,10 @@
     --ink-dim: #6B6862;
     --rule: #D9D7D2;
 
+    --surface: #26251F;
+    --surface-card: #33322C;
+    --ink-invert: #E9E7E2;
+
     --c-multiservice: #1440C4;
     --c-dual: #6C3CE9;
     --c-fastpay: #E23F30;
@@ -72,15 +76,15 @@
     z-index: 100;
     display: flex;
     align-items: center;
-    padding: 0.55rem 1.4rem;
+    padding: 0.55rem;
     border-radius: 999px;
-    background: rgba(28, 27, 25, 0.55);
+    background: rgba(78, 75, 69, 0.6);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
     max-width: calc(100vw - 2rem);
-    transition: padding .3s ease;
+    transition: padding .9s cubic-bezier(0.65, 0, 0.35, 1);
   }
 
   .logo {
@@ -102,31 +106,44 @@
   .nav-items {
     display: flex;
     align-items: center;
-    gap: 0.2rem;
-    margin-left: 2.2rem;
-    max-width: 640px;
-    opacity: 1;
+    margin-left: 1.6rem;
     overflow: hidden;
-    scrollbar-width: none;
-    transition: max-width .35s ease, opacity .25s ease, margin-left .35s ease;
+    transition: margin-left .9s cubic-bezier(0.65, 0, 0.35, 1);
   }
 
-  .nav-items::-webkit-scrollbar { display: none; }
+  .nav-items-inner {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .topnav.collapsed .nav-item:not(.active) {
+    max-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
 
   .topnav.collapsed .nav-items {
-    max-width: 0;
-    opacity: 0;
+    margin-left: 8px;
+  }
+
+  .topnav.collapsed .nav-item.active {
     margin-left: 0;
-    pointer-events: none;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    margin-left: 0.2rem;
+    max-width: 150px;
+    overflow: hidden;
     background: none;
     border: none;
-    color: rgba(255, 255, 255, 0.66);
+    color: rgba(255, 255, 255, 0.85);
     font-family: inherit;
     font-size: 0.88rem;
     font-weight: 500;
@@ -134,7 +151,11 @@
     border-radius: 999px;
     white-space: nowrap;
     cursor: pointer;
-    transition: color .15s ease, background-color .15s ease;
+    transition: color .15s ease, background-color .15s ease,
+                max-width .9s cubic-bezier(0.65, 0, 0.35, 1),
+                padding .9s cubic-bezier(0.65, 0, 0.35, 1),
+                margin-left .9s cubic-bezier(0.65, 0, 0.35, 1),
+                opacity .6s ease;
   }
 
   .nav-item:hover { color: #fff; }
@@ -244,7 +265,7 @@
 
   /* ---------- Content ---------- */
   .content {
-    background: var(--bg);
+    background: var(--surface);
     min-height: 100vh;
   }
 
@@ -397,11 +418,47 @@
 
   .project-meta b { font-weight: 600; }
 
+  /* ---------- Scroll hint ---------- */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  .scroll-hint-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+
+  .scroll-hint-arrow {
+    animation: scroll-hint-bounce 1.3s ease-in-out 2;
+  }
+
+  @keyframes scroll-hint-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-hint-arrow { animation: none; }
+  }
+
   /* ---------- Body ---------- */
   .project-body-card {
     position: relative;
     z-index: 1;
-    background: var(--bg);
+    background: var(--surface);
     border-radius: 28px 28px 0 0;
   }
 
@@ -418,25 +475,38 @@
     margin-bottom: 3rem;
   }
 
-  .project-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
+  .project-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
     margin-bottom: 1.8rem;
   }
 
+  .project-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    background: var(--surface-card);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.6rem 1.7rem;
+  }
+
+  .project-cards .project-row:nth-child(3) {
+    grid-column: 1 / -1;
+  }
 
   .project-row-label {
     font-size: 0.78rem;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.11em;
-    color: var(--accent);
+    color: color-mix(in srgb, var(--accent), #fff 35%);
   }
 
   .project-row-content {
     font-size: 0.98rem;
-    color: var(--ink);
+    color: var(--ink-invert);
     min-width: 0;
   }
 
@@ -609,13 +679,14 @@
       transform: none;
       max-width: none;
       justify-content: space-between;
-      padding: 0.55rem 1.2rem;
+      padding: 0.55rem;
       gap: 0.1rem;
     }
     .contact-menu { min-width: 220px; }
     .hero-content { padding: 2rem 1.6rem; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
-    .project-row { flex-direction: column; gap: 0.3rem; }
+    .project-cards { grid-template-columns: 1fr; }
+    .project-row { gap: 0.5rem; padding: 1.4rem; }
     .project-row-label { flex: none; }
     .gallery { grid-template-columns: 1fr; }
 
@@ -638,11 +709,13 @@
     <svg viewBox="0 0 1045 463" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="1045" height="463" rx="231.5" fill="#0058F0"/><path d="M769.355 134.652C713.073 134.652 679.16 174.217 679.16 233.048C679.16 293.256 715.96 328.004 769.716 328.004C814.091 328.004 849.808 306.329 849.808 256.099V248.874H762.5V218.942H883V356.216H853.416L850.891 322.499C836.82 344.174 805.072 360 766.829 360C692.87 360 642 309.082 642 232.36C642 156.671 693.231 103 770.076 103C827.079 103 871.455 134.308 880.114 182.13H842.593C832.852 150.478 803.99 134.652 769.355 134.652Z" fill="white"/></svg>
   </button>
   <div class="nav-items">
-    <button class="nav-item" data-target="dual">Dual Finance</button>
-    <button class="nav-item" data-target="multiservice">MultiService</button>
-    <button class="nav-item" data-target="fastpay">FastPay</button>
-    <button class="nav-item" data-target="legal">Legal AI</button>
-    <button class="nav-item" data-target="contatti">Contatti</button>
+    <div class="nav-items-inner">
+      <button class="nav-item" data-target="dual">Dual Finance</button>
+      <button class="nav-item" data-target="multiservice">MultiService</button>
+      <button class="nav-item" data-target="fastpay">FastPay</button>
+      <button class="nav-item" data-target="legal">Legal AI</button>
+      <button class="nav-item" data-target="contatti">Contatti</button>
+    </div>
   </div>
   <button class="menu-toggle" id="menuToggle" aria-label="Apri menu">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
@@ -721,9 +794,14 @@
             <span><b>Durata</b> · 6 mesi</span>
           </div>
         </div>
+        <div class="scroll-hint" aria-hidden="true">
+          <span class="scroll-hint-label">Scorri</span>
+          <svg class="scroll-hint-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+        </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
+        <div class="project-cards">
         <div class="project-row">
           <div class="project-row-label">Brief</div>
           <div class="project-row-content">Il cliente aveva bisogno del redesign del frontend della piattaforma gestionale per le carrozzerie convenzionate. Gli utenti la trovavano poco usabile e macchinosa, appesantita da controlli eccessivi che frustravano più che facilitare il lavoro.</div>
@@ -735,6 +813,7 @@
         <div class="project-row">
           <div class="project-row-label">Risultato</div>
           <div class="project-row-content">Ho semplificato architettura e flussi, ridotto il carico cognitivo e creato un canale di messaggistica diretto tra utenti e sala controllo. Il carico sul centro assistenza è calato in modo netto, gli utenti sono diventati più autonomi e la qualità dei dati inseriti è migliorata.</div>
+        </div>
         </div>
 
         <div class="gallery">
@@ -763,9 +842,14 @@
             <span><b>Durata</b> · 6 mesi</span>
           </div>
         </div>
+        <div class="scroll-hint" aria-hidden="true">
+          <span class="scroll-hint-label">Scorri</span>
+          <svg class="scroll-hint-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+        </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
+        <div class="project-cards">
         <div class="project-row">
           <div class="project-row-label">Brief</div>
           <div class="project-row-content">Dual Finance si proponeva come un servizio di microprestiti per un target 25-45 anni, con i flussi di backend già definiti. Serviva un'applicazione costruita sui bisogni reali del target, più due obiettivi secondari: un onboarding che favorisse la conversione dei prospect, e la creazione di un logo con relativa identità visiva.</div>
@@ -777,6 +861,7 @@
         <div class="project-row">
           <div class="project-row-label">Risultato</div>
           <div class="project-row-content">Dopo il progetto il cliente si è detto soddisfatto e in seguito abbiamo lavorato su altri progetti. Non era scontato: in diverse occasioni l'obiettivo di conversione ha spinto verso dark pattern ed è stato necessario difendere l'esperienza utente senza intaccare la soddisfazione del cliente.</div>
+        </div>
         </div>
 
         <div class="gallery">
@@ -803,9 +888,14 @@
             <span><b>Durata</b> · 1 anno</span>
           </div>
         </div>
+        <div class="scroll-hint" aria-hidden="true">
+          <span class="scroll-hint-label">Scorri</span>
+          <svg class="scroll-hint-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+        </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
+        <div class="project-cards">
         <div class="project-row">
           <div class="project-row-label">Brief</div>
           <div class="project-row-content">FastPay aveva bisogno di un redesign completo dell'area riservata clienti: definizione dell'architettura, progettazione delle pagine e handoff al team di sviluppo.</div>
@@ -817,6 +907,7 @@
         <div class="project-row">
           <div class="project-row-label">Risultato</div>
           <div class="project-row-content">Siamo arrivati alla consegna con 2 settimane di anticipo, che abbiamo utilizzato per fare QA.</div>
+        </div>
         </div>
 
         <div class="gallery">
@@ -844,9 +935,14 @@
             <span><b>Durata</b> · 8 mesi</span>
           </div>
         </div>
+        <div class="scroll-hint" aria-hidden="true">
+          <span class="scroll-hint-label">Scorri</span>
+          <svg class="scroll-hint-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+        </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
+        <div class="project-cards">
         <div class="project-row">
           <div class="project-row-label">Brief</div>
           <div class="project-row-content">Il cliente ci ha chiesto di usare un modello GPT sviluppato dalla mia azienda e di trasformarlo in un prodotto usabile da avvocati, di ogni tipologia. Il tool doveva permettere di cercare, salvare ed annotare fonti dalle principali banche dati di settore, e di usare l'AI per elaborarle in una bozza di atto.</div>
@@ -858,6 +954,7 @@
         <div class="project-row">
           <div class="project-row-label">Risultato</div>
           <div class="project-row-content">Legal AI è stato uno dei primi prodotti SaaS di AI legale in Italia (2023). Il design system che ho costruito è ancora oggi alla base del prodotto, espanso nel tempo con nuovi componenti attraverso i rilasci successivi.</div>
+        </div>
         </div>
 
         <div class="gallery">
