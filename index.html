@@ -343,10 +343,25 @@
   .content {
     background: var(--surface);
     min-height: 100vh;
+    overflow-x: clip;   /* clippa il pannello che scorre durante lo swipe-carosello */
   }
 
   .project-panel { display: none; }
   .project-panel.active { display: block; }
+
+  /* Animazione a carosello per lo swipe tra progetti (mobile) */
+  @keyframes panelSlideInRight {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+  }
+  @keyframes panelSlideInLeft {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes panelSlideInRight { from { transform: none; } to { transform: none; } }
+    @keyframes panelSlideInLeft { from { transform: none; } to { transform: none; } }
+  }
 
   /* ---------- Contact menu (floating) ---------- */
   .contact-menu {
@@ -1127,14 +1142,22 @@
     window.addEventListener('load', calibrateNavWidths);
   }
 
-  function activateProject(target) {
+  function activateProject(target, dir) {
     allProjectTriggers.forEach(b => b.classList.remove('active'));
     panels.forEach(p => p.classList.remove('active'));
     document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.add('active'));
-    document.getElementById(target).classList.add('active');
+    const panel = document.getElementById(target);
+    panel.classList.add('active');
     contactMenu.classList.remove('open');
     contactBtn.classList.remove('active');
     window.scrollTo(0, 0);
+    // Reset: evita che un'animazione da swipe precedente si rigiochi ai click
+    panel.style.animation = 'none';
+    // Animazione a carosello solo quando si arriva da uno swipe (dir = 'next'/'prev')
+    if (dir) {
+      void panel.offsetWidth;   // forza il reflow per (ri)lanciare l'animazione
+      panel.style.animation = (dir === 'next' ? 'panelSlideInRight' : 'panelSlideInLeft') + ' .38s cubic-bezier(0.22, 0.61, 0.36, 1)';
+    }
   }
 
   pageNavItems.forEach(btn => {
@@ -1250,9 +1273,9 @@
     if (Math.abs(dx) < Math.abs(dy) * 1.5) return;        // deve essere orizzontale
 
     if (dx < 0 && idx < SWIPE_ORDER.length - 1) {
-      activateProject(SWIPE_ORDER[idx + 1]);
+      activateProject(SWIPE_ORDER[idx + 1], 'next');
     } else if (dx > 0 && idx > 0) {
-      activateProject(SWIPE_ORDER[idx - 1]);
+      activateProject(SWIPE_ORDER[idx - 1], 'prev');
     }
   }, { passive: true });
 
