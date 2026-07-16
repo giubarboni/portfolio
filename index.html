@@ -527,17 +527,28 @@
 
   .home-grid {
     height: 33vh;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    width: 100%;
+    margin: 0 -16px;
+    overflow: hidden;
+  }
+
+  .home-track {
+    display: flex;
+    height: 100%;
+    width: max-content;
+    animation: home-marquee 45s linear infinite;
+  }
+
+  .home-track:hover {
+    animation-play-state: paused;
   }
 
   .home-grid-item {
     position: relative;
     display: block;
-    width: 100%;
+    flex: 0 0 auto;
+    width: 26vw;
     height: 100%;
+    margin-right: 12px;
     border-radius: 8px;
     overflow: hidden;
     background: none;
@@ -556,6 +567,15 @@
 
   .home-grid-item:hover img { transform: scale(1.04); }
 
+  @keyframes home-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-track { animation: none; }
+  }
+
   @media (max-width: 1000px) {
     .home-panel { height: auto; min-height: 100vh; }
     .home-top { flex: none; height: 80vh; padding: 7rem 0 1.5rem; }
@@ -563,8 +583,17 @@
     .home-name { width: 100%; padding: 0; }
     .home-right { width: 100%; padding: 0; flex: 1; gap: 1rem; justify-content: space-between; }
     .home-word { margin-left: 0; }
-    .home-grid { height: auto; grid-template-columns: 1fr 1fr; }
-    .home-grid-item { aspect-ratio: 3 / 2; height: auto; }
+    .home-grid { height: auto; margin: 0; overflow: visible; }
+    .home-track {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      animation: none;
+      transform: none;
+    }
+    .home-track .clone { display: none; }
+    .home-grid-item { width: auto; margin-right: 0; aspect-ratio: 3 / 2; height: auto; }
   }
 
   @media (max-width: 1000px) {
@@ -665,10 +694,16 @@
         </div>
       </div>
       <div class="home-grid">
-        <button class="home-grid-item" data-target="dual"><img src="portfolio-assets/dunk-hero.jpg" alt="Dual Finance"></button>
-        <button class="home-grid-item" data-target="multiservice"><img src="portfolio-assets/unipol-hero.jpg" alt="MultiService"></button>
-        <button class="home-grid-item" data-target="fastpay"><img src="portfolio-assets/compass-hero.jpg" alt="FastPay"></button>
-        <button class="home-grid-item" data-target="legal"><img src="portfolio-assets/lextel-hero.jpeg" alt="Legal AI"></button>
+        <div class="home-track">
+          <button class="home-grid-item" data-target="dual"><img src="portfolio-assets/dunk-hero.jpg" alt="Dual Finance"></button>
+          <button class="home-grid-item" data-target="multiservice"><img src="portfolio-assets/unipol-hero.jpg" alt="MultiService"></button>
+          <button class="home-grid-item" data-target="fastpay"><img src="portfolio-assets/compass-hero.jpg" alt="FastPay"></button>
+          <button class="home-grid-item" data-target="legal"><img src="portfolio-assets/lextel-hero.jpeg" alt="Legal AI"></button>
+          <button class="home-grid-item clone" data-target="dual" aria-hidden="true" tabindex="-1"><img src="portfolio-assets/dunk-hero.jpg" alt=""></button>
+          <button class="home-grid-item clone" data-target="multiservice" aria-hidden="true" tabindex="-1"><img src="portfolio-assets/unipol-hero.jpg" alt=""></button>
+          <button class="home-grid-item clone" data-target="fastpay" aria-hidden="true" tabindex="-1"><img src="portfolio-assets/compass-hero.jpg" alt=""></button>
+          <button class="home-grid-item clone" data-target="legal" aria-hidden="true" tabindex="-1"><img src="portfolio-assets/lextel-hero.jpeg" alt=""></button>
+        </div>
       </div>
     </section>
 
