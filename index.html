@@ -1007,6 +1007,7 @@
     document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.add('active'));
     document.getElementById(target).classList.add('active');
     contactMenu.classList.remove('open');
+    contactBtn.classList.remove('active');
     window.scrollTo(0, 0);
   }
 
@@ -1077,21 +1078,33 @@
   menuToggle.addEventListener('click', () => mobileMenu.classList.add('open'));
   mobileMenuClose.addEventListener('click', closeMobileMenu);
 
+  // Collapse-on-scroll con isteresi: collassa facilmente scrollando in giù,
+  // ma espande solo con uno scroll verso l'alto deciso. Così il piccolo
+  // rimbalzo d'inerzia a fine gesto non riapre la navbar (evita il "doppio scatto").
   let lastScrollY = window.scrollY;
-  const SCROLL_THRESHOLD = 8;
+  let dir = 0;            // 1 = giù, -1 = su
+  let anchorY = lastScrollY;
+  const COLLAPSE_AFTER = 6;   // px in giù per collassare
+  const EXPAND_AFTER = 44;    // px in su per espandere (ignora il rimbalzo d'inerzia)
 
   window.addEventListener('scroll', () => {
     const currentY = window.scrollY;
-    const delta = currentY - lastScrollY;
 
-    if (Math.abs(delta) > SCROLL_THRESHOLD) {
-      if (delta > 0 && currentY > 80) {
-        topnav.classList.add('collapsed');
-      } else {
-        topnav.classList.remove('collapsed');
-      }
+    if (currentY <= 80) {
+      topnav.classList.remove('collapsed');
       lastScrollY = currentY;
+      return;
     }
+
+    const delta = currentY - lastScrollY;
+    if (delta > 0) {
+      if (dir !== 1) { dir = 1; anchorY = currentY; }
+      if (currentY - anchorY > COLLAPSE_AFTER) topnav.classList.add('collapsed');
+    } else if (delta < 0) {
+      if (dir !== -1) { dir = -1; anchorY = currentY; }
+      if (anchorY - currentY > EXPAND_AFTER) topnav.classList.remove('collapsed');
+    }
+    lastScrollY = currentY;
   }, { passive: true });
 </script>
 
