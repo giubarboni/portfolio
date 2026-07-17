@@ -1179,7 +1179,7 @@
   // Uscente e entrante vengono posizionati fixed sopra lo schermo e traslati
   // in X contemporaneamente; l'uscente mantiene la sua posizione di scroll (Y).
   let sliding = false;
-  function slideToProject(target, dir) {
+  function slideToProject(target, dir, duration) {
     if (sliding) return;
     const outgoing = document.querySelector('.project-panel.active');
     const incoming = document.getElementById(target);
@@ -1208,7 +1208,8 @@
 
     void incoming.offsetWidth;   // reflow: fissa lo stato iniziale prima di animare
 
-    const ease = 'transform .52s cubic-bezier(0.35, 0.4, 0.45, 0.94)';
+    const dur = duration || 0.52;   // durata (s): la passa lo swipe in base alla velocità
+    const ease = 'transform ' + dur + 's cubic-bezier(0.25, 0.46, 0.45, 0.94)';
     outgoing.style.transition = ease;
     incoming.style.transition = ease;
     outgoing.style.transform = 'translate(' + (-sign * vw) + 'px, ' + (-scrollY) + 'px)';
@@ -1237,7 +1238,7 @@
       if (e.target === incoming && e.propertyName === 'transform') cleanup();
     }
     incoming.addEventListener('transitionend', onEnd);
-    setTimeout(cleanup, 550);   // fallback se transitionend non scatta
+    setTimeout(cleanup, dur * 1000 + 120);   // fallback se transitionend non scatta
   }
 
   pageNavItems.forEach(btn => {
@@ -1329,12 +1330,13 @@
   // successivo, a destra -> precedente. Attivo solo se si è su una pagina
   // progetto e il gesto è chiaramente orizzontale (non uno scroll verticale).
   const SWIPE_ORDER = ['home', 'dual', 'multiservice', 'fastpay', 'legal'];
-  let swStartX = 0, swStartY = 0;
+  let swStartX = 0, swStartY = 0, swStartT = 0;
 
   document.addEventListener('touchstart', (e) => {
     if (e.touches.length !== 1) return;
     swStartX = e.touches[0].clientX;
     swStartY = e.touches[0].clientY;
+    swStartT = e.timeStamp;
   }, { passive: true });
 
   document.addEventListener('touchend', (e) => {
@@ -1352,10 +1354,17 @@
     if (Math.abs(dx) < 30) return;                        // gesto troppo corto
     if (Math.abs(dx) < Math.abs(dy) * 1.2) return;        // deve essere orizzontale
 
+    // Durata proporzionale alla velocità del gesto: uno swipe più deciso
+    // fa scorrere il carosello più in fretta. Modello "continuo": tempo per
+    // percorrere l'intera larghezza schermo alla velocità del dito, con clamp.
+    const dt = Math.max(1, e.timeStamp - swStartT);       // ms
+    const vAbs = Math.abs(dx) / dt;                       // px/ms
+    const duration = Math.min(0.52, Math.max(0.30, window.innerWidth / vAbs / 1000));
+
     if (dx < 0 && idx < SWIPE_ORDER.length - 1) {
-      slideToProject(SWIPE_ORDER[idx + 1], 'next');
+      slideToProject(SWIPE_ORDER[idx + 1], 'next', duration);
     } else if (dx > 0 && idx > 0) {
-      slideToProject(SWIPE_ORDER[idx - 1], 'prev');
+      slideToProject(SWIPE_ORDER[idx - 1], 'prev', duration);
     }
   }, { passive: true });
 
