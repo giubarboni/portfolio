@@ -1349,7 +1349,7 @@
     const t = e.changedTouches[0];
     const dx = t.clientX - swStartX;
     const dy = t.clientY - swStartY;
-    if (Math.abs(dx) < 40) return;                        // gesto troppo corto
+    if (Math.abs(dx) < 30) return;                        // gesto troppo corto
     if (Math.abs(dx) < Math.abs(dy) * 1.2) return;        // deve essere orizzontale
 
     if (dx < 0 && idx < SWIPE_ORDER.length - 1) {
