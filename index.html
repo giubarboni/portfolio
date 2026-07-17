@@ -621,7 +621,9 @@
   /* ---------- Home ---------- */
   .home-panel {
     height: 100vh;
-    height: 100dvh;
+    height: 100svh;   /* svh = viewport "piccolo" (barra URL visibile): altezza
+                         fissa che non cambia quando la barra mobile appare/scompare,
+                         così i contenuti centrati non "scattano" arrivando in home */
     overflow: hidden;
     box-sizing: border-box;
     background: var(--ink);
@@ -751,9 +753,9 @@
   }
 
   @media (max-width: 1000px) {
-    /* 100dvh = altezza reale del viewport (barra indirizzi inclusa): la home
-       combacia esattamente e non scrolla. 100vh come fallback. */
-    .home-panel { height: 100vh; height: 100dvh; min-height: 100vh; min-height: 100dvh; padding: 0 16px; }
+    /* 100svh = altezza del viewport con la barra URL visibile: valore fisso,
+       la home non scrolla e non "scatta" quando la barra appare. 100vh fallback. */
+    .home-panel { height: 100vh; height: 100svh; min-height: 100vh; min-height: 100svh; padding: 0 16px; }
     .home-top { flex: 1; height: auto; padding: 1.5rem 0 5rem; }
     .home-grid { display: none; }   /* niente marquee su mobile */
   }
