@@ -688,7 +688,7 @@
 
   @keyframes home-nudge-bounce {
     0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -797,12 +797,11 @@
       gap: 0.1rem;
     }
     .contact-menu { min-width: 220px; }
-    /* su mobile: solo chevron-down (niente testo), più in alto per non
+    /* su mobile: freccia in giù (niente testo), più in alto per non
        finire sotto la navbar in basso; stessa animazione bounce del desktop */
     .scroll-hint { bottom: 10.5rem; opacity: 0.5; }
     .scroll-hint-label { display: none; }
     .scroll-hint-arrow { width: 28px; height: 28px; }
-    .scroll-hint-arrow line { display: none; }   /* nasconde l'asta -> chevron */
     .hero-content { padding: 2rem 1.6rem; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
@@ -910,7 +909,7 @@
           <h1 class="home-name">Giulio Barboni</h1>
           <p class="home-tagline">UX/UI, Web Design, Strategia, Workshop e in generale soluzioni digitali creative per risolvere problemi molto umani</p>
           <div class="home-nudge" aria-hidden="true">
-            <svg class="home-nudge-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <svg class="home-nudge-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
           </div>
         </div>
       </div>
