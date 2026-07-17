@@ -352,6 +352,10 @@
      fixed via JS); blocco lo scroll e l'overflow per evitare glitch */
   body.sliding { overflow: hidden; }
 
+  /* La home è un pannello a tutta altezza senza contenuto da scorrere:
+     blocco lo scroll per evitare il micro-scroll residuo (barre/arrotondamenti). */
+  body.home-active { overflow: hidden; }
+
   /* ---------- Contact menu (floating) ---------- */
   .contact-menu {
     position: fixed;
@@ -568,7 +572,7 @@
     flex-direction: column;
     gap: 0.7rem;
     background: var(--surface-card);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 16px;
     padding: 1.6rem 1.7rem;
   }
@@ -613,6 +617,8 @@
   /* ---------- Home ---------- */
   .home-panel {
     height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
     box-sizing: border-box;
     background: var(--ink);
     color: #fff;
@@ -665,6 +671,28 @@
     font-size: 1.5rem;
     line-height: 1.3;
     color: rgba(255, 255, 255, 0.62);
+  }
+
+  /* Nudge: invita a scorrere verso sinistra tra i progetti.
+     Bounce orizzontale minimale, stessa impostazione dello scroll-hint hero. */
+  .home-nudge {
+    margin-top: 1.8rem;
+    display: flex;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .home-nudge-arrow {
+    animation: home-nudge-bounce 1.3s ease-in-out infinite;
+  }
+
+  @keyframes home-nudge-bounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-5px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-nudge-arrow { animation: none; }
   }
 
   .home-grid {
@@ -794,7 +822,7 @@
   }
 </style>
 </head>
-<body>
+<body class="home-active">
 
 <nav class="topnav">
   <button class="logo" data-target="home" aria-label="Home - Giulio Barboni">
@@ -881,6 +909,9 @@
           <span class="home-word">Portfolio</span>
           <h1 class="home-name">Giulio Barboni</h1>
           <p class="home-tagline">UX/UI, Web Design, Strategia, Workshop e in generale soluzioni digitali creative per risolvere problemi molto umani</p>
+          <div class="home-nudge" aria-hidden="true">
+            <svg class="home-nudge-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          </div>
         </div>
       </div>
       <div class="home-grid">
@@ -1141,6 +1172,7 @@
     document.getElementById(target).classList.add('active');
     contactMenu.classList.remove('open');
     contactBtn.classList.remove('active');
+    document.body.classList.toggle('home-active', target === 'home');
     window.scrollTo(0, 0);
   }
 
