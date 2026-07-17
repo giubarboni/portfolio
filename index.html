@@ -343,25 +343,14 @@
   .content {
     background: var(--surface);
     min-height: 100vh;
-    overflow-x: clip;   /* clippa il pannello che scorre durante lo swipe-carosello */
   }
 
   .project-panel { display: none; }
   .project-panel.active { display: block; }
 
-  /* Animazione a carosello per lo swipe tra progetti (mobile) */
-  @keyframes panelSlideInRight {
-    from { transform: translateX(100%); }
-    to   { transform: translateX(0); }
-  }
-  @keyframes panelSlideInLeft {
-    from { transform: translateX(-100%); }
-    to   { transform: translateX(0); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    @keyframes panelSlideInRight { from { transform: none; } to { transform: none; } }
-    @keyframes panelSlideInLeft { from { transform: none; } to { transform: none; } }
-  }
+  /* Durante lo swipe-carosello: i due pannelli scorrono insieme (posizionati
+     fixed via JS); blocco lo scroll e l'overflow per evitare glitch */
+  body.sliding { overflow: hidden; }
 
   /* ---------- Contact menu (floating) ---------- */
   .contact-menu {
@@ -1142,22 +1131,79 @@
     window.addEventListener('load', calibrateNavWidths);
   }
 
-  function activateProject(target, dir) {
+  function activateProject(target) {
     allProjectTriggers.forEach(b => b.classList.remove('active'));
     panels.forEach(p => p.classList.remove('active'));
     document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.add('active'));
-    const panel = document.getElementById(target);
-    panel.classList.add('active');
+    document.getElementById(target).classList.add('active');
     contactMenu.classList.remove('open');
     contactBtn.classList.remove('active');
     window.scrollTo(0, 0);
-    // Reset: evita che un'animazione da swipe precedente si rigiochi ai click
-    panel.style.animation = 'none';
-    // Animazione a carosello solo quando si arriva da uno swipe (dir = 'next'/'prev')
-    if (dir) {
-      void panel.offsetWidth;   // forza il reflow per (ri)lanciare l'animazione
-      panel.style.animation = (dir === 'next' ? 'panelSlideInRight' : 'panelSlideInLeft') + ' .38s cubic-bezier(0.22, 0.61, 0.36, 1)';
+  }
+
+  // Transizione a carosello "stile Mac": i due pannelli scorrono insieme.
+  // Uscente e entrante vengono posizionati fixed sopra lo schermo e traslati
+  // in X contemporaneamente; l'uscente mantiene la sua posizione di scroll (Y).
+  let sliding = false;
+  function slideToProject(target, dir) {
+    if (sliding) return;
+    const outgoing = document.querySelector('.project-panel.active');
+    const incoming = document.getElementById(target);
+    if (!outgoing || !incoming || outgoing === incoming) { activateProject(target); return; }
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { activateProject(target); return; }
+
+    sliding = true;
+    const scrollY = window.scrollY;
+    const vw = window.innerWidth;
+    const sign = dir === 'next' ? 1 : -1;   // next: entra da destra, esce a sinistra
+
+    document.body.classList.add('sliding');
+    incoming.classList.add('active');
+
+    [outgoing, incoming].forEach(p => {
+      p.style.position = 'fixed';
+      p.style.top = '0';
+      p.style.left = '0';
+      p.style.width = '100%';
+      p.style.zIndex = '50';
+      p.style.willChange = 'transform';
+      p.style.transition = 'none';
+    });
+    outgoing.style.transform = 'translate(0px, ' + (-scrollY) + 'px)';
+    incoming.style.transform = 'translate(' + (sign * vw) + 'px, 0px)';
+
+    void incoming.offsetWidth;   // reflow: fissa lo stato iniziale prima di animare
+
+    const ease = 'transform .42s cubic-bezier(0.22, 0.61, 0.36, 1)';
+    outgoing.style.transition = ease;
+    incoming.style.transition = ease;
+    outgoing.style.transform = 'translate(' + (-sign * vw) + 'px, ' + (-scrollY) + 'px)';
+    incoming.style.transform = 'translate(0px, 0px)';
+
+    let done = false;
+    function cleanup() {
+      if (done) return;
+      done = true;
+      incoming.removeEventListener('transitionend', onEnd);
+      [outgoing, incoming].forEach(p => {
+        p.style.position = '';
+        p.style.top = '';
+        p.style.left = '';
+        p.style.width = '';
+        p.style.zIndex = '';
+        p.style.transform = '';
+        p.style.transition = '';
+        p.style.willChange = '';
+      });
+      document.body.classList.remove('sliding');
+      activateProject(target);   // finalizza: uscente nascosto, entrante attivo, scroll a 0
+      sliding = false;
     }
+    function onEnd(e) {
+      if (e.target === incoming && e.propertyName === 'transform') cleanup();
+    }
+    incoming.addEventListener('transitionend', onEnd);
+    setTimeout(cleanup, 550);   // fallback se transitionend non scatta
   }
 
   pageNavItems.forEach(btn => {
@@ -1273,9 +1319,9 @@
     if (Math.abs(dx) < Math.abs(dy) * 1.5) return;        // deve essere orizzontale
 
     if (dx < 0 && idx < SWIPE_ORDER.length - 1) {
-      activateProject(SWIPE_ORDER[idx + 1], 'next');
+      slideToProject(SWIPE_ORDER[idx + 1], 'next');
     } else if (dx > 0 && idx > 0) {
-      activateProject(SWIPE_ORDER[idx - 1], 'prev');
+      slideToProject(SWIPE_ORDER[idx - 1], 'prev');
     }
   }, { passive: true });
 
