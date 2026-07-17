@@ -420,6 +420,7 @@
     top: 0;
     z-index: 0;
     height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     color: #fff;
     display: flex;
@@ -718,7 +719,9 @@
   }
 
   @media (max-width: 1000px) {
-    .home-panel { height: 100vh; min-height: 100vh; padding: 0 16px; }
+    /* 100dvh = altezza reale del viewport (barra indirizzi inclusa): la home
+       combacia esattamente e non scrolla. 100vh come fallback. */
+    .home-panel { height: 100vh; height: 100dvh; min-height: 100vh; min-height: 100dvh; padding: 0 16px; }
     .home-top { flex: 1; height: auto; padding: 1.5rem 0 5rem; }
     .home-grid { display: none; }   /* niente marquee su mobile */
   }
@@ -768,7 +771,7 @@
     .contact-menu { min-width: 220px; }
     /* su mobile: solo chevron-down (niente testo), più in alto per non
        finire sotto la navbar in basso; stessa animazione bounce del desktop */
-    .scroll-hint { bottom: 9rem; opacity: 0.5; }
+    .scroll-hint { bottom: 10.5rem; opacity: 0.5; }
     .scroll-hint-label { display: none; }
     .scroll-hint-arrow { width: 28px; height: 28px; }
     .scroll-hint-arrow line { display: none; }   /* nasconde l'asta -> chevron */
