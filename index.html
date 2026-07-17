@@ -103,6 +103,10 @@
     display: block;
   }
 
+  /* Nelle pagine prodotto il logo blu è più scuro di 20 punti di brightness
+     (HSB): #0058F0 -> #0045BD. Home e Contatti restano sul blu originale. */
+  body.product-active .logo svg rect { fill: #0045BD; }
+
   .nav-items {
     display: flex;
     align-items: center;
@@ -1172,6 +1176,7 @@
     contactMenu.classList.remove('open');
     contactBtn.classList.remove('active');
     document.body.classList.toggle('home-active', target === 'home');
+    document.body.classList.toggle('product-active', target !== 'home' && target !== 'contatti');
     window.scrollTo(0, 0);
   }
 
