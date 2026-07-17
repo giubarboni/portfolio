@@ -103,9 +103,12 @@
     display: block;
   }
 
-  /* Nelle pagine prodotto il logo blu è più scuro di 20 punti di brightness
-     (HSB): #0058F0 -> #0045BD. Home e Contatti restano sul blu originale. */
+  /* Logo blu, variazioni di brightness (HSB) per contesto — base #0058F0:
+     - pagine prodotto: -20 (#0045BD)
+     - home: +5 (#005DFD)
+     Contatti resta sul blu base. */
   body.product-active .logo svg rect { fill: #0045BD; }
+  body.home-active .logo svg rect { fill: #005DFD; }
 
   .nav-items {
     display: flex;
