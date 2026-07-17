@@ -1423,33 +1423,45 @@
 </script>
 
 <script>
-// Sfondo "aurora" della home: nastri (curtain) dei 4 colori progetto che
-// ondeggiano, con velocità di deriva modulata da una curva di Bézier (il campo
-// accelera e rallenta, non è costante). Disegna solo quando la home è attiva;
-// fotogramma statico se l'utente preferisce meno movimento.
+// Sfondo "aurora" della home: nastri (curtain) dei 4 colori progetto.
+// - deriva molto lenta, con brevi raffiche molto veloci a intervalli casuali,
+//   ciascuna con andamento ease-in-out (Bézier);
+// - i nastri traslano oltre i bordi e rientrano (fasi randomizzate);
+// - la larghezza di ogni nastro varia nel tempo.
+// Disegna solo quando la home è attiva; fotogramma statico se l'utente
+// preferisce meno movimento.
 (function () {
   var canvas = document.getElementById('homeAurora');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
   var home = document.getElementById('home');
   var W = 0, H = 0, DPR = 1, cw0 = 0, ch0 = 0;
+  var TWO_PI = Math.PI * 2, SPAN = 1.7;
 
   var COLORS = ['#1440C4', '#6C3CE9', '#E23F30', '#1F6D4C'];
-  var R = [
-    { x: 0.18, ang: -0.20, w: 1.05, c: 0, a: 0.90, fm: 1.00, ph: 0.0 },
-    { x: 0.38, ang:  0.12, w: 0.85, c: 1, a: 0.85, fm: 0.72, ph: 1.7 },
-    { x: 0.54, ang: -0.08, w: 1.10, c: 3, a: 0.90, fm: 1.25, ph: 3.1 },
-    { x: 0.71, ang:  0.18, w: 0.90, c: 2, a: 0.80, fm: 0.88, ph: 0.9 },
-    { x: 0.30, ang:  0.06, w: 0.70, c: 2, a: 0.50, fm: 1.45, ph: 4.2 },
-    { x: 0.86, ang: -0.15, w: 0.82, c: 1, a: 0.60, fm: 0.62, ph: 2.4 }
-  ];
-  var SPEED = 1, PULSE = 1, INTENSITY = 0.5, WIDTH = 0.12, BLEND = 'screen', MOUSE = true;
-  var PERIOD = 9; // secondi di un ciclo accelera→rallenta
+  var COLASSIGN = [0, 1, 3, 2, 2, 1], AMP = [0.90, 0.85, 0.90, 0.80, 0.52, 0.62];
+  var R = [];
+  for (var ri = 0; ri < 6; ri++) {
+    R.push({
+      c: COLASSIGN[ri],
+      ang: (Math.random() * 2 - 1) * 0.22,
+      w: 0.7 + Math.random() * 0.5,
+      a: AMP[ri],
+      fm: 0.7 + Math.random() * 0.8,
+      ph: Math.random() * TWO_PI,
+      tr: (Math.random() < 0.5 ? -1 : 1) * (0.10 + Math.random() * 0.10),  // traslazione (verso+velocità)
+      tph: (ri / 6) * SPAN + Math.random() * 0.25,                         // sfasati per coprire lo schermo
+      sr: 0.14 + Math.random() * 0.22,                                     // ritmo variazione dimensione
+      sph: Math.random() * TWO_PI
+    });
+  }
+  var SPEED = 1, RAFF = 1, INTENSITY = 0.5, WIDTH = 0.12, BLEND = 'screen', MOUSE = true, SLOW = 0.12;
 
   var mx = -1, my = -1, mAct = 0, flow = 0, elapsed = 0, last = null;
+  var nextBurstAt = 2.5, bursting = false, bStart = 0, bDur = 1.2, bPeak = 7;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Easing cubic-bezier(0.65,0,0.35,1): risolve y dato x (bisezione).
+  function rand(a, b) { return a + Math.random() * (b - a); }
   function makeBezier(x1, y1, x2, y2) {
     function cx(t) { var m = 1 - t; return 3 * x1 * t * m * m + 3 * x2 * t * t * m + t * t * t; }
     function cy(t) { var m = 1 - t; return 3 * y1 * t * m * m + 3 * y2 * t * t * m + t * t * t; }
@@ -1468,13 +1480,17 @@
     return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
   }
   function centerX(r, u) {
-    return W * (r.x
-      + 0.10 * Math.sin(2 * Math.PI * 0.6 * u + flow * r.fm + r.ph)
-      + 0.05 * Math.sin(2 * Math.PI * 1.3 * u - flow * r.fm * 0.7 + r.ph * 1.3)
-      + 0.025 * Math.sin(2 * Math.PI * 2.1 * u + r.ph * 0.7));
+    var base = flow * r.tr + r.tph;
+    var t = ((base % SPAN) + SPAN) % SPAN;               // wrap invisibile fuori schermo
+    var x0 = -0.35 + t;
+    return W * (x0
+      + 0.05 * Math.sin(TWO_PI * 0.6 * u + flow * r.fm + r.ph)
+      + 0.028 * Math.sin(TWO_PI * 1.3 * u - flow * r.fm * 0.7 + r.ph * 1.3));
   }
   function halfW(r, u) {
-    return W * WIDTH * r.w * (0.6 + 0.4 * Math.sin(2 * Math.PI * 0.9 * u + flow * 0.5 + r.ph));
+    var sizeOsc = 0.5 + 0.5 * Math.sin(flow * r.sr + r.sph);           // dimensione variabile nel tempo
+    var lenBreath = 0.7 + 0.3 * Math.sin(TWO_PI * 0.9 * u + flow * 0.5 + r.ph);
+    return W * WIDTH * r.w * (0.4 + 1.1 * sizeOsc) * lenBreath;
   }
   function drawRibbon(r) {
     ctx.save();
@@ -1511,11 +1527,15 @@
     if (canvas.clientWidth !== cw0 || canvas.clientHeight !== ch0) resize();
     if (last == null) last = ts;
     var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-    elapsed += dt * PULSE;
-    var php = (elapsed % PERIOD) / PERIOD;
-    var tri = php < 0.5 ? php * 2 : (1 - php) * 2;
-    var speedMul = 0.18 + 1.7 * ease(tri);        // velocità modulata dalla Bézier
-    flow += dt * SPEED * speedMul;
+    elapsed += dt;
+    if (!bursting && elapsed >= nextBurstAt) { bursting = true; bStart = elapsed; bDur = rand(0.8, 1.6); bPeak = rand(6, 11); }
+    var sm = SLOW;
+    if (bursting) {
+      var p = (elapsed - bStart) / bDur;
+      if (p >= 1) { bursting = false; nextBurstAt = elapsed + rand(2.5, 6.5) / RAFF; }
+      else { var tri = p < 0.5 ? p * 2 : (1 - p) * 2; sm = SLOW + (bPeak - SLOW) * ease(tri); }   // raffica ease-in-out
+    }
+    flow += dt * SPEED * sm;
     mAct += ((mx >= 0 ? 1 : 0) - mAct) * Math.min(1, dt * 2.5);
     draw();
   }
