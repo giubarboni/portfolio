@@ -1458,7 +1458,7 @@
       iph: Math.random() * TWO_PI
     });
   }
-  var SPEED = 1, RAFF = 1, INTENSITY = 0.5, WIDTH = 1.0, BLEND = 'screen', MOUSE = true, SLOW = 0.12;
+  var SPEED = 1, RAFF = 1, INTENSITY = 0.5, WIDTH = 1.0, BLEND = 'screen', MOUSE = true, SLOW = 0.32;
 
   var mx = -1, my = -1, mAct = 0, flow = 0, elapsed = 0, last = null;
   var nextBurstAt = 2.5, bursting = false, bStart = 0, bDur = 1.2, bPeak = 7, burstAmt = 0;
@@ -1536,7 +1536,7 @@
     var sm = SLOW, ba = 0;
     if (bursting) {
       var p = (elapsed - bStart) / bDur;
-      if (p >= 1) { bursting = false; nextBurstAt = elapsed + rand(2.5, 6.5) / RAFF; }
+      if (p >= 1) { bursting = false; nextBurstAt = elapsed + rand(1.5, 11) / RAFF; }
       else { var tri = p < 0.5 ? p * 2 : (1 - p) * 2; ba = ease(tri); sm = SLOW + (bPeak - SLOW) * ba; }   // raffica ease-in-out
     }
     burstAmt = ba;
