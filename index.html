@@ -1453,13 +1453,15 @@
       tr: (Math.random() < 0.5 ? -1 : 1) * (0.10 + Math.random() * 0.10),  // traslazione (verso+velocità)
       tph: (ri / 6) * SPAN + Math.random() * 0.25,                         // sfasati per coprire lo schermo
       sr: 0.10 + Math.random() * 0.22,                                     // ritmo variazione dimensione
-      sph: Math.random() * TWO_PI
+      sph: Math.random() * TWO_PI,
+      ir: 0.09 + Math.random() * 0.22,                                     // ritmo variazione intensità
+      iph: Math.random() * TWO_PI
     });
   }
   var SPEED = 1, RAFF = 1, INTENSITY = 0.5, WIDTH = 1.0, BLEND = 'screen', MOUSE = true, SLOW = 0.12;
 
   var mx = -1, my = -1, mAct = 0, flow = 0, elapsed = 0, last = null;
-  var nextBurstAt = 2.5, bursting = false, bStart = 0, bDur = 1.2, bPeak = 7;
+  var nextBurstAt = 2.5, bursting = false, bStart = 0, bDur = 1.2, bPeak = 7, burstAmt = 0;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function rand(a, b) { return a + Math.random() * (b - a); }
@@ -1501,7 +1503,8 @@
     for (u = -0.2; u <= 1.2; u += 0.04) { y = u * H; x = centerX(r, u) - halfW(r, u); if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y); }
     for (u = 1.2; u >= -0.2; u -= 0.04) { y = u * H; x = centerX(r, u) + halfW(r, u); ctx.lineTo(x, y); }
     ctx.closePath();
-    var alpha = INTENSITY * r.a;
+    var intOsc = 0.30 + 0.70 * (0.5 + 0.5 * Math.sin(elapsed * r.ir + r.iph));   // luminosità che sfuma nel tempo
+    var alpha = INTENSITY * r.a * intOsc * (1 + 0.35 * burstAmt);                 // + guizzo durante le raffiche
     var g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0.0, hexA(COLORS[r.c], 0));
     g.addColorStop(0.32, hexA(COLORS[r.c], alpha * 0.85));
@@ -1530,12 +1533,13 @@
     var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
     elapsed += dt;
     if (!bursting && elapsed >= nextBurstAt) { bursting = true; bStart = elapsed; bDur = rand(0.8, 1.6); bPeak = rand(6, 11); }
-    var sm = SLOW;
+    var sm = SLOW, ba = 0;
     if (bursting) {
       var p = (elapsed - bStart) / bDur;
       if (p >= 1) { bursting = false; nextBurstAt = elapsed + rand(2.5, 6.5) / RAFF; }
-      else { var tri = p < 0.5 ? p * 2 : (1 - p) * 2; sm = SLOW + (bPeak - SLOW) * ease(tri); }   // raffica ease-in-out
+      else { var tri = p < 0.5 ? p * 2 : (1 - p) * 2; ba = ease(tri); sm = SLOW + (bPeak - SLOW) * ba; }   // raffica ease-in-out
     }
+    burstAmt = ba;
     flow += dt * SPEED * sm;
     mAct += ((mx >= 0 ? 1 : 0) - mAct) * Math.min(1, dt * 2.5);
     draw();
