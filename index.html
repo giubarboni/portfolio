@@ -648,7 +648,7 @@
     height: 128%;
     z-index: 0;
     pointer-events: none;
-    filter: blur(50px);
+    filter: blur(22px);   /* sfocatura di base; la messa a fuoco per-nastro è aggiunta dal canvas */
   }
 
   .home-top,
@@ -1454,8 +1454,10 @@
       tph: (ri / 6) * SPAN + Math.random() * 0.25,                         // sfasati per coprire lo schermo
       sr: 0.10 + Math.random() * 0.22,                                     // ritmo variazione dimensione
       sph: Math.random() * TWO_PI,
-      ir: 0.09 + Math.random() * 0.22,                                     // ritmo variazione intensità
-      iph: Math.random() * TWO_PI
+      ir: 0.09 + Math.random() * 0.22, iph: Math.random() * TWO_PI,        // intensità: due sinusoidi
+      ir2: 0.05 + Math.random() * 0.13, iph2: Math.random() * TWO_PI,
+      fr: 0.07 + Math.random() * 0.16, fph: Math.random() * TWO_PI,        // messa a fuoco: due sinusoidi
+      fr2: 0.04 + Math.random() * 0.10, fph2: Math.random() * TWO_PI
     });
   }
   var SPEED = 1, RAFF = 1, INTENSITY = 0.5, WIDTH = 1.0, BLEND = 'screen', MOUSE = true, SLOW = 0.32;
@@ -1473,7 +1475,7 @@
   var ease = makeBezier(0.65, 0, 0.35, 1);
 
   function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     W = canvas.clientWidth; H = canvas.clientHeight; cw0 = W; ch0 = H;
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -1503,8 +1505,13 @@
     for (u = -0.2; u <= 1.2; u += 0.04) { y = u * H; x = centerX(r, u) - halfW(r, u); if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y); }
     for (u = 1.2; u >= -0.2; u -= 0.04) { y = u * H; x = centerX(r, u) + halfW(r, u); ctx.lineTo(x, y); }
     ctx.closePath();
-    var intOsc = 0.30 + 0.70 * (0.5 + 0.5 * Math.sin(elapsed * r.ir + r.iph));   // luminosità che sfuma nel tempo
-    var alpha = INTENSITY * r.a * intOsc * (1 + 0.35 * burstAmt);                 // + guizzo durante le raffiche
+    // intensità: onda organica (due sinusoidi incommensurabili) + guizzo raffica
+    var iraw = 0.62 * Math.sin(elapsed * r.ir + r.iph) + 0.38 * Math.sin(elapsed * r.ir2 + r.iph2);
+    var intOsc = 0.22 + 0.78 * (0.5 + 0.5 * iraw);
+    var alpha = INTENSITY * r.a * intOsc * (1 + 0.35 * burstAmt);
+    // messa a fuoco: sfocatura per-nastro ondulatoria (due sinusoidi) -> alcuni nitidi, altri sfocati
+    var fraw = 0.60 * Math.sin(elapsed * r.fr + r.fph) + 0.40 * Math.sin(elapsed * r.fr2 + r.fph2);
+    ctx.filter = 'blur(' + (4 + 42 * (0.5 + 0.5 * fraw)).toFixed(1) + 'px)';
     var g = ctx.createLinearGradient(0, 0, 0, H);
     g.addColorStop(0.0, hexA(COLORS[r.c], 0));
     g.addColorStop(0.32, hexA(COLORS[r.c], alpha * 0.85));
