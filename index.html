@@ -627,7 +627,8 @@
                          così i contenuti centrati non "scattano" arrivando in home */
     overflow: hidden;
     box-sizing: border-box;
-    background: var(--ink);
+    position: relative;
+    background: #0A0A0C;
     color: #fff;
     flex-direction: column;
     padding: 0 16px 16px;
@@ -636,6 +637,22 @@
   .project-panel.active.home-panel {
     display: flex;
   }
+
+  /* Sfondo "aurora": bagliori Canvas sfocati dietro ai contenuti della home.
+     Sborda oltre il pannello (clippato da overflow:hidden) così la sfocatura
+     non annerisce i bordi. */
+  .home-aurora {
+    position: absolute;
+    inset: -12%;
+    width: 124%;
+    height: 124%;
+    z-index: 0;
+    pointer-events: none;
+    filter: blur(20px);
+  }
+
+  .home-top,
+  .home-grid { position: relative; z-index: 1; }
 
   .home-top {
     flex: 1;
@@ -909,6 +926,7 @@
 <main class="content">
 
     <section class="project-panel active home-panel" id="home">
+      <canvas class="home-aurora" id="homeAurora" aria-hidden="true"></canvas>
       <div class="home-top">
         <div class="home-stack">
           <span class="home-word">Portfolio</span>
@@ -1402,6 +1420,84 @@
     }
     lastScrollY = currentY;
   }, { passive: true });
+</script>
+
+<script>
+// Sfondo "aurora" della home: bagliori radiali dei 4 colori progetto che
+// derivano con moto sinusoidale su fondo nero. Disegna solo quando la home
+// è attiva; fotogramma statico se l'utente preferisce meno movimento.
+(function () {
+  var canvas = document.getElementById('homeAurora');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var home = document.getElementById('home');
+  var W = 0, H = 0, DPR = 1, minDim = 0, cw0 = 0, ch0 = 0;
+
+  var COLORS = ['#1440C4', '#6C3CE9', '#E23F30', '#1F6D4C'];
+  var BLOBS = [
+    { c: 0, cx: 0.22, cy: 0.30, ax: 0.18, ay: 0.22, sx: 0.070, sy: 0.050, px: 0.0, py: 1.5, r: 0.72, a: 1.0 },
+    { c: 1, cx: 0.76, cy: 0.26, ax: 0.22, ay: 0.18, sx: -0.052, sy: 0.062, px: 2.0, py: 0.5, r: 0.82, a: 1.0 },
+    { c: 2, cx: 0.70, cy: 0.74, ax: 0.20, ay: 0.20, sx: 0.060, sy: -0.046, px: 1.0, py: 3.0, r: 0.86, a: 1.0 },
+    { c: 3, cx: 0.26, cy: 0.72, ax: 0.24, ay: 0.16, sx: -0.056, sy: 0.052, px: 3.0, py: 2.0, r: 0.76, a: 1.0 },
+    { c: 1, cx: 0.50, cy: 0.55, ax: 0.28, ay: 0.24, sx: 0.045, sy: -0.060, px: 4.0, py: 1.0, r: 0.60, a: 0.7 },
+    { c: 2, cx: 0.45, cy: 0.16, ax: 0.20, ay: 0.15, sx: -0.062, sy: 0.055, px: 5.0, py: 2.5, r: 0.55, a: 0.6 }
+  ];
+  var SPEED = 3, INTENSITY = 0.25, SIZE = 0.5, BLEND = 'screen', MOUSE = true;
+
+  var mx = -1, my = -1, mAct = 0, phaseTime = 0, last = null;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight; minDim = Math.min(W, H);
+    cw0 = W; ch0 = H;
+    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  function hexA(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+  function paintBlob(cx, cy, R, hex, alpha) {
+    var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+    g.addColorStop(0, hexA(hex, alpha));
+    g.addColorStop(0.55, hexA(hex, alpha * 0.22));
+    g.addColorStop(1, hexA(hex, 0));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = BLEND;
+    for (var i = 0; i < BLOBS.length; i++) {
+      var b = BLOBS[i];
+      var x = W * (b.cx + b.ax * Math.sin(phaseTime * b.sx + b.px));
+      var y = H * (b.cy + b.ay * Math.sin(phaseTime * b.sy + b.py));
+      paintBlob(x, y, minDim * b.r * SIZE, COLORS[b.c], INTENSITY * b.a);
+    }
+    if (MOUSE && mAct > 0.01 && mx >= 0) paintBlob(mx, my, minDim * 0.5 * SIZE, '#4A7BFF', INTENSITY * 0.5 * mAct);
+    ctx.globalCompositeOperation = 'source-over';
+  }
+  function frame(ts) {
+    requestAnimationFrame(frame);
+    var activeNow = document.body.classList.contains('home-active');
+    if (!activeNow || canvas.clientWidth === 0) { last = null; return; }   // niente disegno fuori dalla home
+    if (canvas.clientWidth !== cw0 || canvas.clientHeight !== ch0) resize();
+    if (last == null) last = ts;
+    var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+    phaseTime += dt * SPEED;
+    mAct += ((mx >= 0 ? 1 : 0) - mAct) * Math.min(1, dt * 2.5);
+    draw();
+  }
+
+  home.addEventListener('pointermove', function (e) {
+    var r = canvas.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
+  });
+  home.addEventListener('pointerleave', function () { mx = -1; my = -1; });
+  window.addEventListener('resize', function () { if (canvas.clientWidth) resize(); });
+
+  resize();
+  if (reduce) { draw(); } else { requestAnimationFrame(frame); }
+})();
 </script>
 
 </body>
