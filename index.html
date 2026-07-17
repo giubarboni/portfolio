@@ -628,7 +628,7 @@
     overflow: hidden;
     box-sizing: border-box;
     position: relative;
-    background: #0A0A0C;
+    background: #050506;
     color: #fff;
     flex-direction: column;
     padding: 0 16px 16px;
@@ -643,12 +643,12 @@
      non annerisce i bordi. */
   .home-aurora {
     position: absolute;
-    inset: -12%;
-    width: 124%;
-    height: 124%;
+    inset: -14%;
+    width: 128%;
+    height: 128%;
     z-index: 0;
     pointer-events: none;
-    filter: blur(20px);
+    filter: blur(50px);
   }
 
   .home-top,
@@ -1423,34 +1423,43 @@
 </script>
 
 <script>
-// Sfondo "aurora" della home: bagliori radiali dei 4 colori progetto che
-// derivano con moto sinusoidale su fondo nero. Disegna solo quando la home
-// è attiva; fotogramma statico se l'utente preferisce meno movimento.
+// Sfondo "aurora" della home: nastri (curtain) dei 4 colori progetto che
+// ondeggiano, con velocità di deriva modulata da una curva di Bézier (il campo
+// accelera e rallenta, non è costante). Disegna solo quando la home è attiva;
+// fotogramma statico se l'utente preferisce meno movimento.
 (function () {
   var canvas = document.getElementById('homeAurora');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
   var home = document.getElementById('home');
-  var W = 0, H = 0, DPR = 1, minDim = 0, cw0 = 0, ch0 = 0;
+  var W = 0, H = 0, DPR = 1, cw0 = 0, ch0 = 0;
 
   var COLORS = ['#1440C4', '#6C3CE9', '#E23F30', '#1F6D4C'];
-  var BLOBS = [
-    { c: 0, cx: 0.22, cy: 0.30, ax: 0.18, ay: 0.22, sx: 0.070, sy: 0.050, px: 0.0, py: 1.5, r: 0.72, a: 1.0 },
-    { c: 1, cx: 0.76, cy: 0.26, ax: 0.22, ay: 0.18, sx: -0.052, sy: 0.062, px: 2.0, py: 0.5, r: 0.82, a: 1.0 },
-    { c: 2, cx: 0.70, cy: 0.74, ax: 0.20, ay: 0.20, sx: 0.060, sy: -0.046, px: 1.0, py: 3.0, r: 0.86, a: 1.0 },
-    { c: 3, cx: 0.26, cy: 0.72, ax: 0.24, ay: 0.16, sx: -0.056, sy: 0.052, px: 3.0, py: 2.0, r: 0.76, a: 1.0 },
-    { c: 1, cx: 0.50, cy: 0.55, ax: 0.28, ay: 0.24, sx: 0.045, sy: -0.060, px: 4.0, py: 1.0, r: 0.60, a: 0.7 },
-    { c: 2, cx: 0.45, cy: 0.16, ax: 0.20, ay: 0.15, sx: -0.062, sy: 0.055, px: 5.0, py: 2.5, r: 0.55, a: 0.6 }
+  var R = [
+    { x: 0.18, ang: -0.20, w: 1.05, c: 0, a: 0.90, fm: 1.00, ph: 0.0 },
+    { x: 0.38, ang:  0.12, w: 0.85, c: 1, a: 0.85, fm: 0.72, ph: 1.7 },
+    { x: 0.54, ang: -0.08, w: 1.10, c: 3, a: 0.90, fm: 1.25, ph: 3.1 },
+    { x: 0.71, ang:  0.18, w: 0.90, c: 2, a: 0.80, fm: 0.88, ph: 0.9 },
+    { x: 0.30, ang:  0.06, w: 0.70, c: 2, a: 0.50, fm: 1.45, ph: 4.2 },
+    { x: 0.86, ang: -0.15, w: 0.82, c: 1, a: 0.60, fm: 0.62, ph: 2.4 }
   ];
-  var SPEED = 3, INTENSITY = 0.25, SIZE = 0.5, BLEND = 'screen', MOUSE = true;
+  var SPEED = 1, PULSE = 1, INTENSITY = 0.5, WIDTH = 0.12, BLEND = 'screen', MOUSE = true;
+  var PERIOD = 9; // secondi di un ciclo accelera→rallenta
 
-  var mx = -1, my = -1, mAct = 0, phaseTime = 0, last = null;
+  var mx = -1, my = -1, mAct = 0, flow = 0, elapsed = 0, last = null;
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Easing cubic-bezier(0.65,0,0.35,1): risolve y dato x (bisezione).
+  function makeBezier(x1, y1, x2, y2) {
+    function cx(t) { var m = 1 - t; return 3 * x1 * t * m * m + 3 * x2 * t * t * m + t * t * t; }
+    function cy(t) { var m = 1 - t; return 3 * y1 * t * m * m + 3 * y2 * t * t * m + t * t * t; }
+    return function (x) { var lo = 0, hi = 1, t = x, v; for (var i = 0; i < 20; i++) { t = (lo + hi) / 2; v = cx(t); if (v < x) lo = t; else hi = t; } return cy(t); };
+  }
+  var ease = makeBezier(0.65, 0, 0.35, 1);
 
   function resize() {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = canvas.clientWidth; H = canvas.clientHeight; minDim = Math.min(W, H);
-    cw0 = W; ch0 = H;
+    W = canvas.clientWidth; H = canvas.clientHeight; cw0 = W; ch0 = H;
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
@@ -1458,40 +1467,60 @@
     var n = parseInt(hex.slice(1), 16);
     return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
   }
-  function paintBlob(cx, cy, R, hex, alpha) {
-    var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R);
-    g.addColorStop(0, hexA(hex, alpha));
-    g.addColorStop(0.55, hexA(hex, alpha * 0.22));
-    g.addColorStop(1, hexA(hex, 0));
-    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  function centerX(r, u) {
+    return W * (r.x
+      + 0.10 * Math.sin(2 * Math.PI * 0.6 * u + flow * r.fm + r.ph)
+      + 0.05 * Math.sin(2 * Math.PI * 1.3 * u - flow * r.fm * 0.7 + r.ph * 1.3)
+      + 0.025 * Math.sin(2 * Math.PI * 2.1 * u + r.ph * 0.7));
+  }
+  function halfW(r, u) {
+    return W * WIDTH * r.w * (0.6 + 0.4 * Math.sin(2 * Math.PI * 0.9 * u + flow * 0.5 + r.ph));
+  }
+  function drawRibbon(r) {
+    ctx.save();
+    ctx.translate(W / 2, H / 2); ctx.rotate(r.ang); ctx.translate(-W / 2, -H / 2);
+    ctx.beginPath();
+    var u, y, x, first = true;
+    for (u = -0.2; u <= 1.2; u += 0.04) { y = u * H; x = centerX(r, u) - halfW(r, u); if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y); }
+    for (u = 1.2; u >= -0.2; u -= 0.04) { y = u * H; x = centerX(r, u) + halfW(r, u); ctx.lineTo(x, y); }
+    ctx.closePath();
+    var alpha = INTENSITY * r.a;
+    var g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0.0, hexA(COLORS[r.c], 0));
+    g.addColorStop(0.32, hexA(COLORS[r.c], alpha * 0.85));
+    g.addColorStop(0.6, hexA(COLORS[r.c], alpha));
+    g.addColorStop(1.0, hexA(COLORS[r.c], 0));
+    ctx.fillStyle = g; ctx.fill();
+    ctx.restore();
   }
   function draw() {
     ctx.clearRect(0, 0, W, H);
     ctx.globalCompositeOperation = BLEND;
-    for (var i = 0; i < BLOBS.length; i++) {
-      var b = BLOBS[i];
-      var x = W * (b.cx + b.ax * Math.sin(phaseTime * b.sx + b.px));
-      var y = H * (b.cy + b.ay * Math.sin(phaseTime * b.sy + b.py));
-      paintBlob(x, y, minDim * b.r * SIZE, COLORS[b.c], INTENSITY * b.a);
+    for (var i = 0; i < R.length; i++) drawRibbon(R[i]);
+    if (MOUSE && mAct > 0.01 && mx >= 0) {
+      var gr = ctx.createRadialGradient(mx, my, 0, mx, my, Math.min(W, H) * 0.42);
+      gr.addColorStop(0, hexA('#4A7BFF', INTENSITY * 0.45 * mAct));
+      gr.addColorStop(1, hexA('#4A7BFF', 0));
+      ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
     }
-    if (MOUSE && mAct > 0.01 && mx >= 0) paintBlob(mx, my, minDim * 0.5 * SIZE, '#4A7BFF', INTENSITY * 0.5 * mAct);
     ctx.globalCompositeOperation = 'source-over';
   }
   function frame(ts) {
     requestAnimationFrame(frame);
-    var activeNow = document.body.classList.contains('home-active');
-    if (!activeNow || canvas.clientWidth === 0) { last = null; return; }   // niente disegno fuori dalla home
+    if (!document.body.classList.contains('home-active') || canvas.clientWidth === 0) { last = null; return; }
     if (canvas.clientWidth !== cw0 || canvas.clientHeight !== ch0) resize();
     if (last == null) last = ts;
     var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-    phaseTime += dt * SPEED;
+    elapsed += dt * PULSE;
+    var php = (elapsed % PERIOD) / PERIOD;
+    var tri = php < 0.5 ? php * 2 : (1 - php) * 2;
+    var speedMul = 0.18 + 1.7 * ease(tri);        // velocità modulata dalla Bézier
+    flow += dt * SPEED * speedMul;
     mAct += ((mx >= 0 ? 1 : 0) - mAct) * Math.min(1, dt * 2.5);
     draw();
   }
 
-  home.addEventListener('pointermove', function (e) {
-    var r = canvas.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top;
-  });
+  home.addEventListener('pointermove', function (e) { var r = canvas.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
   home.addEventListener('pointerleave', function () { mx = -1; my = -1; });
   window.addEventListener('resize', function () { if (canvas.clientWidth) resize(); });
 
