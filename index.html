@@ -638,17 +638,15 @@
     display: flex;
   }
 
-  /* Sfondo "aurora": bagliori Canvas sfocati dietro ai contenuti della home.
-     Sborda oltre il pannello (clippato da overflow:hidden) così la sfocatura
-     non annerisce i bordi. */
-  .home-aurora {
+  /* Sfondo a onde: pixel-shader su Canvas dietro ai contenuti della home. */
+  .hero-wave-canvas {
     position: absolute;
-    inset: -14%;
-    width: 128%;
-    height: 128%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     z-index: 0;
     pointer-events: none;
-    filter: blur(22px);   /* sfocatura di base; la messa a fuoco per-nastro è aggiunta dal canvas */
+    display: block;
   }
 
   .home-top,
@@ -926,7 +924,7 @@
 <main class="content">
 
     <section class="project-panel active home-panel" id="home">
-      <canvas class="home-aurora" id="homeAurora" aria-hidden="true"></canvas>
+      <canvas class="hero-wave-canvas" id="hero-wave" aria-hidden="true"></canvas>
       <div class="home-top">
         <div class="home-stack">
           <span class="home-word">Portfolio</span>
@@ -1423,141 +1421,124 @@
 </script>
 
 <script>
-// Sfondo "aurora" della home: nastri (curtain) dei 4 colori progetto.
-// - deriva molto lenta, con brevi raffiche molto veloci a intervalli casuali,
-//   ciascuna con andamento ease-in-out (Bézier);
-// - i nastri traslano oltre i bordi e rientrano (fasi randomizzate);
-// - la larghezza di ogni nastro varia nel tempo.
+// Sfondo a onde della home: pixel-shader emulato su Canvas.
 // Disegna solo quando la home è attiva; fotogramma statico se l'utente
 // preferisce meno movimento.
 (function () {
-  var canvas = document.getElementById('homeAurora');
+  var canvas = document.getElementById('hero-wave');
   if (!canvas) return;
   var ctx = canvas.getContext('2d');
-  var home = document.getElementById('home');
-  var W = 0, H = 0, DPR = 1, cw0 = 0, ch0 = 0;
-  var TWO_PI = Math.PI * 2, SPAN = 1.7;
+  var panel = canvas.closest('.home-panel');
 
-  var COLORS = ['#1440C4', '#6C3CE9', '#E23F30', '#1F6D4C'];
-  var COLASSIGN = [0, 1, 3, 2, 2, 1], AMP = [0.90, 0.82, 0.90, 0.80, 0.58, 0.66];
-  var BW = [0.05, 0.24, 0.10, 0.30, 0.05, 0.16];   // larghezze base molto diverse: filamenti sottili e washes ampi
-  var R = [];
-  for (var ri = 0; ri < 6; ri++) {
-    R.push({
-      c: COLASSIGN[ri],
-      ang: (Math.random() * 2 - 1) * 0.38,          // inclinazioni più varie
-      bw: BW[ri],
-      a: AMP[ri],
-      fm: 0.7 + Math.random() * 0.8,
-      ph: Math.random() * TWO_PI,
-      tr: (Math.random() < 0.5 ? -1 : 1) * (0.10 + Math.random() * 0.10),  // traslazione (verso+velocità)
-      tph: (ri / 6) * SPAN + Math.random() * 0.25,                         // sfasati per coprire lo schermo
-      sr: 0.10 + Math.random() * 0.22,                                     // ritmo variazione dimensione
-      sph: Math.random() * TWO_PI,
-      ir: 0.09 + Math.random() * 0.22, iph: Math.random() * TWO_PI,        // intensità: due sinusoidi
-      ir2: 0.05 + Math.random() * 0.13, iph2: Math.random() * TWO_PI,
-      fr: 0.07 + Math.random() * 0.16, fph: Math.random() * TWO_PI,        // messa a fuoco: due sinusoidi
-      fr2: 0.04 + Math.random() * 0.10, fph2: Math.random() * TWO_PI
-    });
+  // Tabelle precalcolate di seno/coseno: leggere una tabella è più veloce
+  // che ricalcolare Math.sin/cos per ogni pixel di ogni fotogramma.
+  var SIN_TABLE = new Float32Array(1024);
+  var COS_TABLE = new Float32Array(1024);
+  for (var i = 0; i < 1024; i++) {
+    var angle = (i / 1024) * Math.PI * 2;
+    SIN_TABLE[i] = Math.sin(angle);
+    COS_TABLE[i] = Math.cos(angle);
   }
-  var SPEED = 1, RAFF = 1, INTENSITY = 0.5, WIDTH = 1.0, BLEND = 'screen', MOUSE = true, SLOW = 0.32;
+  var TWO_PI = Math.PI * 2;
+  function fastSin(x) { return SIN_TABLE[Math.floor(((x % TWO_PI) / TWO_PI) * 1024) & 1023]; }
+  function fastCos(x) { return COS_TABLE[Math.floor(((x % TWO_PI) / TWO_PI) * 1024) & 1023]; }
 
-  var mx = -1, my = -1, mAct = 0, flow = 0, elapsed = 0, last = null;
-  var nextBurstAt = 2.5, bursting = false, bStart = 0, bDur = 1.2, bPeak = 7, burstAmt = 0;
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var width, height, imageData, data, SCALE = 2;
+  var rafId = null, running = false;
+  var startTime = Date.now();
 
-  function rand(a, b) { return a + Math.random() * (b - a); }
-  function makeBezier(x1, y1, x2, y2) {
-    function cx(t) { var m = 1 - t; return 3 * x1 * t * m * m + 3 * x2 * t * t * m + t * t * t; }
-    function cy(t) { var m = 1 - t; return 3 * y1 * t * m * m + 3 * y2 * t * t * m + t * t * t; }
-    return function (x) { var lo = 0, hi = 1, t = x, v; for (var i = 0; i < 20; i++) { t = (lo + hi) / 2; v = cx(t); if (v < x) lo = t; else hi = t; } return cy(t); };
+  function resizeCanvas() {
+    var w = panel.clientWidth || window.innerWidth;
+    var h = panel.clientHeight || window.innerHeight;
+    if (!w || !h) return;                 // home nascosta: niente da dimensionare
+    canvas.width = w;
+    canvas.height = h;
+    // Su schermi grandi calcoliamo a risoluzione più bassa per alleggerire la CPU
+    SCALE = w > 1600 ? 3 : 2;
+    width = Math.floor(w / SCALE);
+    height = Math.floor(h / SCALE);
+    imageData = ctx.createImageData(width, height);
+    data = imageData.data;
   }
-  var ease = makeBezier(0.65, 0, 0.35, 1);
 
-  function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-    W = canvas.clientWidth; H = canvas.clientHeight; cw0 = W; ch0 = H;
-    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  }
-  function hexA(hex, a) {
-    var n = parseInt(hex.slice(1), 16);
-    return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')';
-  }
-  function centerX(r, u) {
-    var base = flow * r.tr + r.tph;
-    var t = ((base % SPAN) + SPAN) % SPAN;               // wrap invisibile fuori schermo
-    var x0 = -0.35 + t;
-    return W * (x0
-      + 0.05 * Math.sin(TWO_PI * 0.6 * u + flow * r.fm + r.ph)
-      + 0.028 * Math.sin(TWO_PI * 1.3 * u - flow * r.fm * 0.7 + r.ph * 1.3));
-  }
-  function halfW(r, u) {
-    var sizeOsc = 0.5 + 0.5 * Math.sin(elapsed * r.sr + r.sph);        // dimensione: escursione ampia, sempre viva
-    var lenBreath = 0.62 + 0.38 * Math.sin(TWO_PI * 0.9 * u + flow * 0.5 + r.ph);
-    return W * WIDTH * r.bw * (0.30 + 1.55 * sizeOsc) * lenBreath;
-  }
-  function drawRibbon(r) {
-    ctx.save();
-    ctx.translate(W / 2, H / 2); ctx.rotate(r.ang); ctx.translate(-W / 2, -H / 2);
-    ctx.beginPath();
-    var u, y, x, first = true;
-    for (u = -0.2; u <= 1.2; u += 0.04) { y = u * H; x = centerX(r, u) - halfW(r, u); if (first) { ctx.moveTo(x, y); first = false; } else ctx.lineTo(x, y); }
-    for (u = 1.2; u >= -0.2; u -= 0.04) { y = u * H; x = centerX(r, u) + halfW(r, u); ctx.lineTo(x, y); }
-    ctx.closePath();
-    // intensità: onda organica (due sinusoidi incommensurabili) + guizzo raffica
-    var iraw = 0.62 * Math.sin(elapsed * r.ir + r.iph) + 0.38 * Math.sin(elapsed * r.ir2 + r.iph2);
-    var intOsc = 0.22 + 0.78 * (0.5 + 0.5 * iraw);
-    var alpha = INTENSITY * r.a * intOsc * (1 + 0.35 * burstAmt);
-    // messa a fuoco: sfocatura per-nastro ondulatoria (due sinusoidi) -> alcuni nitidi, altri sfocati
-    var fraw = 0.60 * Math.sin(elapsed * r.fr + r.fph) + 0.40 * Math.sin(elapsed * r.fr2 + r.fph2);
-    ctx.filter = 'blur(' + (4 + 42 * (0.5 + 0.5 * fraw)).toFixed(1) + 'px)';
-    var g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0.0, hexA(COLORS[r.c], 0));
-    g.addColorStop(0.32, hexA(COLORS[r.c], alpha * 0.85));
-    g.addColorStop(0.6, hexA(COLORS[r.c], alpha));
-    g.addColorStop(1.0, hexA(COLORS[r.c], 0));
-    ctx.fillStyle = g; ctx.fill();
-    ctx.restore();
-  }
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.globalCompositeOperation = BLEND;
-    for (var i = 0; i < R.length; i++) drawRibbon(R[i]);
-    if (MOUSE && mAct > 0.01 && mx >= 0) {
-      var gr = ctx.createRadialGradient(mx, my, 0, mx, my, Math.min(W, H) * 0.42);
-      gr.addColorStop(0, hexA('#4A7BFF', INTENSITY * 0.45 * mAct));
-      gr.addColorStop(1, hexA('#4A7BFF', 0));
-      ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+  function renderFrame() {
+    if (!data) return;
+    var time = (Date.now() - startTime) * 0.001;
+
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        var u_x = (2 * x - width) / height;
+        var u_y = (2 * y - height) / height;
+
+        var a = 0, d = 0;
+        for (var i = 0; i < 4; i++) {
+          a += fastCos(i - d + time * 0.5 - a * u_x);
+          d += fastSin(i * u_y + a);
+        }
+
+        var wave = (fastSin(a) + fastCos(d)) * 0.5;
+        var intensity = 0.3 + 0.4 * wave;
+        var baseVal = 0.1 + 0.15 * fastCos(u_x + u_y + time * 0.3);
+        var blueAccent = 0.2 * fastSin(a * 1.5 + time * 0.2);
+        var purpleAccent = 0.15 * fastCos(d * 2 + time * 0.1);
+
+        var r = Math.max(0, Math.min(1, baseVal + purpleAccent * 0.8)) * intensity;
+        var g = Math.max(0, Math.min(1, baseVal + blueAccent * 0.6)) * intensity;
+        var b = Math.max(0, Math.min(1, baseVal + blueAccent * 1.2 + purpleAccent * 0.4)) * intensity;
+
+        var index = (y * width + x) * 4;
+        data[index]     = r * 255;
+        data[index + 1] = g * 255;
+        data[index + 2] = b * 255;
+        data[index + 3] = 255;
+      }
     }
-    ctx.globalCompositeOperation = 'source-over';
-  }
-  function frame(ts) {
-    requestAnimationFrame(frame);
-    if (!document.body.classList.contains('home-active') || canvas.clientWidth === 0) { last = null; return; }
-    if (canvas.clientWidth !== cw0 || canvas.clientHeight !== ch0) resize();
-    if (last == null) last = ts;
-    var dt = Math.min(0.05, (ts - last) / 1000); last = ts;
-    elapsed += dt;
-    if (!bursting && elapsed >= nextBurstAt) { bursting = true; bStart = elapsed; bDur = rand(2.4, 4.8); bPeak = rand(2.4, 4.2); }
-    var sm = SLOW, ba = 0;
-    if (bursting) {
-      var p = (elapsed - bStart) / bDur;
-      if (p >= 1) { bursting = false; nextBurstAt = elapsed + rand(1.5, 11) / RAFF; }
-      else { var tri = p < 0.5 ? p * 2 : (1 - p) * 2; ba = ease(tri); sm = SLOW + (bPeak - SLOW) * ba; }   // raffica ease-in-out
+
+    ctx.putImageData(imageData, 0, 0);
+    if (SCALE > 1) {
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(canvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
     }
-    burstAmt = ba;
-    flow += dt * SPEED * sm;
-    mAct += ((mx >= 0 ? 1 : 0) - mAct) * Math.min(1, dt * 2.5);
-    draw();
   }
 
-  home.addEventListener('pointermove', function (e) { var r = canvas.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; });
-  home.addEventListener('pointerleave', function () { mx = -1; my = -1; });
-  window.addEventListener('resize', function () { if (canvas.clientWidth) resize(); });
+  function loop() {
+    renderFrame();
+    rafId = requestAnimationFrame(loop);
+  }
 
-  resize();
-  if (reduce) { draw(); } else { requestAnimationFrame(frame); }
+  function start() {
+    if (running) return;
+    running = true;
+    resizeCanvas();
+    loop();
+  }
+  function stop() {
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+
+  window.addEventListener('resize', function () { if (running) resizeCanvas(); });
+
+  // Accessibilità: se l'utente ha attivato "riduci animazioni", mostriamo
+  // un solo fotogramma statico invece del loop.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    resizeCanvas();
+    renderFrame();
+    return;
+  }
+
+  // L'animazione gira solo quando la home è effettivamente visibile.
+  // Quando navighi su un progetto la home va in display:none → l'observer
+  // segnala "non visibile" e fermiamo i calcoli (CPU/batteria risparmiate).
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) { start(); } else { stop(); }
+    }, { threshold: 0 });
+    io.observe(panel);
+  } else {
+    start();   // fallback browser molto vecchi
+  }
 })();
 </script>
 
