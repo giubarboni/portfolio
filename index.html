@@ -1447,6 +1447,11 @@
   var rafId = null, running = false;
   var startTime = Date.now();
 
+  // Luminosità delle onde. La formula originale è molto scura (~66/255 al picco):
+  // questo moltiplicatore le rende più intense. 1 = originale, 2 = doppia, ecc.
+  // Alza/abbassa questo valore per regolare l'intensità.
+  var BRIGHTNESS = 1.75;
+
   function resizeCanvas() {
     var w = panel.clientWidth || window.innerWidth;
     var h = panel.clientHeight || window.innerHeight;
@@ -1487,9 +1492,9 @@
         var b = Math.max(0, Math.min(1, baseVal + blueAccent * 1.2 + purpleAccent * 0.4)) * intensity;
 
         var index = (y * width + x) * 4;
-        data[index]     = r * 255;
-        data[index + 1] = g * 255;
-        data[index + 2] = b * 255;
+        data[index]     = Math.min(255, r * 255 * BRIGHTNESS);
+        data[index + 1] = Math.min(255, g * 255 * BRIGHTNESS);
+        data[index + 2] = Math.min(255, b * 255 * BRIGHTNESS);
         data[index + 3] = 255;
       }
     }
