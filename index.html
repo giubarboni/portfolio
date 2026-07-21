@@ -656,14 +656,24 @@
   }
 
   @media (max-width: 1000px) {
-    /* Bottone Contatti: flottante e centrale in basso (dove prima c'era la navbar),
-       visibile solo in home. */
+    /* Bottone Contatti (solo home, <1000px): text button bianco sottolineato,
+       flottante e centrale in basso. */
     .contact-fab {
       top: auto;
       bottom: 16px;
       left: 50%;
       right: auto;
       transform: translateX(-50%);
+      background: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      padding: 0;
+      color: #fff;
+      opacity: 0.65;
+      text-decoration: underline;
     }
     body.home-active .contact-fab { display: block; }
 
