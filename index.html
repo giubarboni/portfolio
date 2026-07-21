@@ -572,6 +572,16 @@
     padding: 3.5rem 3rem 5rem;
   }
 
+  /* Su tutti i dispositivi touch: radius card ridotto a 24px */
+  @media (pointer: coarse) {
+    .project-body-card { border-radius: 24px 24px 0 0; }
+  }
+  /* Touch sotto i 1000px: gap negativo (-24px) tra card e hero,
+     così la card risale e "spunta" di più da sotto la hero. */
+  @media (pointer: coarse) and (max-width: 1000px) {
+    .project-body-card { margin-top: -24px; }
+  }
+
   .hero-img {
     width: 100%;
     border-radius: 12px;
@@ -751,6 +761,9 @@
        (24px sopra la navbar); questo è solo un fallback se il JS non gira. */
     .scroll-hint { bottom: 8.5rem; opacity: 0.75; }
     .hero-content { padding: 2rem 1.6rem; }
+    /* Hero leggermente più corta: il bordo arrotondato della card sottostante
+       "spunta" da sotto all'atterraggio, invitando a scorrere. */
+    .project-hero-panel { height: 88vh; height: 88dvh; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
     .project-row { gap: 0.5rem; padding: 1.4rem; }
