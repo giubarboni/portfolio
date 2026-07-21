@@ -717,7 +717,15 @@
   @media (max-width: 1000px) {
     /* Tab a icone nella bottom bar (niente hamburger, niente Contatti qui) */
     .menu-toggle { display: none; }
-    .contact-fab { display: block; }
+    /* Bottone Contatti: flottante e centrale in basso (dove prima c'era la navbar) */
+    .contact-fab {
+      display: block;
+      top: auto;
+      bottom: 16px;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
 
     .nav-items {
       display: flex;
@@ -746,8 +754,8 @@
 
   @media (max-width: 1000px) {
     .topnav {
-      top: auto;
-      bottom: 16px;
+      top: 16px;
+      bottom: auto;
       left: 16px;
       right: 16px;
       transform: none;
