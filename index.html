@@ -500,6 +500,21 @@
   @media (pointer: coarse) and (max-width: 1000px) {
     .project-body-card { margin-top: -24px; }
   }
+  /* Handle stile bottom sheet in cima alla card (dispositivi <1000px):
+     barretta arrotondata centrata, come i grabber di iOS/Material (rif. Mobbin). */
+  @media (max-width: 1000px) {
+    .project-body-card::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
   /* Nudge pagine progetto: su dispositivi touch, a 48px dal bordo inferiore */
   @media (pointer: coarse) {
     .scroll-hint { bottom: 48px; }
