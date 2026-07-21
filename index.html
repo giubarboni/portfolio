@@ -529,11 +529,10 @@
     font-size: 0.86rem;
   }
 
+  /* Solo testo: niente chip (padding/border/radius) per non sembrare cliccabili
+     e non confondersi con il bottone "Contatti". */
   .project-meta span {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    padding: 0.5rem 1.1rem;
-    border-radius: 999px;
+    opacity: 0.85;
   }
 
   .project-meta b { font-weight: 600; }
@@ -763,10 +762,9 @@
       gap: 0.1rem;
     }
     .contact-menu { min-width: 220px; }
-    /* su mobile: freccia in giù (niente testo), più in alto per non
-       finire sotto la navbar in basso; stessa animazione bounce del desktop */
-    .scroll-hint { bottom: 9.5rem; opacity: 0.75; }
-    .scroll-hint-label { display: none; }
+    /* Come desktop (icona + label "Scorri"), ma tenuto in alto per non finire
+       dietro la bottom-bar della navbar mobile; 16px più in basso di prima. */
+    .scroll-hint { bottom: 8.5rem; opacity: 0.75; }
     .hero-content { padding: 2rem 1.6rem; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
@@ -1351,7 +1349,11 @@
     if (sel && sel.toString().length > 0) return;   // sta selezionando testo: non navigare
     const dir = dirFor(e.clientX);
     const tgt = targetFor(dir);
-    if (tgt) slideToProject(tgt, dir);
+    if (!tgt) return;
+    // Su mobile/tablet (touch, <=1000px) il tap cambia slide in modo ISTANTANEO
+    // (niente animazione a carosello); lo swipe invece resta animato.
+    if (window.innerWidth <= 1000) activateProject(tgt);
+    else slideToProject(tgt, dir);
   }
   const hideCursor = () => { if (navCursor) navCursor.classList.remove('visible'); };
 
