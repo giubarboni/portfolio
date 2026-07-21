@@ -688,9 +688,9 @@
     }
     .contact-menu { min-width: 220px; }
     .hero-content { padding: 2rem 1.6rem; }
-    /* Hero leggermente più corta: il bordo arrotondato della card sottostante
-       "spunta" da sotto all'atterraggio, invitando a scorrere. */
-    .project-hero-panel { height: 92vh; height: 92svh; }
+    /* Hero a tutta altezza (100svh, valore fisso). La card sottostante spunta
+       comunque grazie all'overlap negativo (vedi regola touch). */
+    .project-hero-panel { height: 100vh; height: 100svh; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
     .project-row { gap: 0.5rem; padding: 1.4rem; }
