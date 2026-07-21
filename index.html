@@ -495,8 +495,8 @@
     padding: 3.5rem 3rem 5rem;
   }
 
-  /* Touch sotto i 1000px: gap negativo (-24px) tra card e hero,
-     così la card risale e "spunta" di più da sotto la hero. */
+  /* Touch sotto i 1000px: la card mantiene un overlap di -24px sulla hero,
+     pari al corner radius (24px), così l'angolo arrotondato resta pulito. */
   @media (pointer: coarse) and (max-width: 1000px) {
     .project-body-card { margin-top: -24px; }
   }
@@ -634,7 +634,7 @@
     /* 100dvh = riempie sempre il viewport visibile (anche con barra collassata).
        100vh come fallback per browser senza supporto dvh. */
     .home-panel { height: 100vh; height: 100dvh; min-height: 100vh; min-height: 100dvh; padding: 0 16px; }
-    .home-top { flex: 1; height: auto; padding: 1.5rem 0 5rem; }
+    .home-top { flex: 1; height: auto; padding: 4rem 0; }
   }
 
   @media (max-width: 1000px) {
@@ -690,7 +690,7 @@
     .hero-content { padding: 2rem 1.6rem; }
     /* Hero leggermente più corta: il bordo arrotondato della card sottostante
        "spunta" da sotto all'atterraggio, invitando a scorrere. */
-    .project-hero-panel { height: 88vh; height: 88dvh; }
+    .project-hero-panel { height: 92vh; height: 92svh; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
     .project-row { gap: 0.5rem; padding: 1.4rem; }
