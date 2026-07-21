@@ -763,7 +763,7 @@
     }
     .contact-menu { min-width: 220px; }
     /* Come desktop (icona + label "Scorri"). Il valore preciso lo imposta il JS
-       (32px sopra la navbar); questo è solo un fallback se il JS non gira. */
+       (24px sopra la navbar); questo è solo un fallback se il JS non gira. */
     .scroll-hint { bottom: 8.5rem; opacity: 0.75; }
     .hero-content { padding: 2rem 1.6rem; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
@@ -1382,13 +1382,13 @@
   if (desktopPointer.matches) enableCursor();
   desktopPointer.addEventListener('change', (ev) => ev.matches ? enableCursor() : disableCursor());
 
-  // Nudge "flottante": sotto i 1000px lo posiziono a 32px sopra la navbar
+  // Nudge "flottante": sotto i 1000px lo posiziono a 24px sopra la navbar
   // bottom-bar (ne misuro l'altezza reale). Sopra i 1000px torna al CSS desktop.
   const scrollHints = document.querySelectorAll('.scroll-hint');
   function positionScrollHints() {
     if (window.innerWidth <= 1000) {
       const navTop = topnav.getBoundingClientRect().top;   // top navbar dal top viewport
-      const bottomPx = Math.round(window.innerHeight - navTop + 32);   // 32px sopra la navbar
+      const bottomPx = Math.round(window.innerHeight - navTop + 24);   // 24px sopra la navbar
       scrollHints.forEach(h => { h.style.bottom = bottomPx + 'px'; });
     } else {
       scrollHints.forEach(h => { h.style.bottom = ''; });   // desktop: usa il valore CSS
