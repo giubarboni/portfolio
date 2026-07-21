@@ -276,83 +276,6 @@
 
   .contact-modal-inner .contact-row svg { width: 24px; height: 24px; }
 
-  /* ---------- Mobile menu toggle + fullscreen menu ---------- */
-  .menu-toggle {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    background: none;
-    border: none;
-    color: #fff;
-    padding: 0.5rem 0.7rem;
-    border-radius: 999px;
-    cursor: pointer;
-    margin-left: 0.4rem;
-  }
-
-  .menu-toggle:hover { background: rgba(255, 255, 255, 0.1); }
-
-  .mobile-menu {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: rgba(28, 27, 25, 0.55);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
-  }
-
-  .mobile-menu.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .mobile-menu-close {
-    position: absolute;
-    top: 1.6rem;
-    right: 1.6rem;
-    background: none;
-    border: none;
-    color: #fff;
-    padding: 0.6rem;
-    cursor: pointer;
-  }
-
-  .mobile-menu-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
-    width: 100%;
-    max-width: 340px;
-    padding: 0 2rem;
-  }
-
-  .mobile-menu-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    width: 100%;
-    background: none;
-    border: none;
-    color: rgba(255, 255, 255, 0.82);
-    font-family: inherit;
-    font-size: 1.3rem;
-    font-weight: 500;
-    text-decoration: none;
-    padding: 0.9rem 1rem;
-    cursor: pointer;
-  }
-
-  .mobile-menu-item:hover,
-  .mobile-menu-item.active { color: #fff; }
-
   /* ---------- Contatti page (mobile full page) ---------- */
   .contatti-page {
     min-height: 100vh;
@@ -715,17 +638,16 @@
   }
 
   @media (max-width: 1000px) {
-    /* Tab a icone nella bottom bar (niente hamburger, niente Contatti qui) */
-    .menu-toggle { display: none; }
-    /* Bottone Contatti: flottante e centrale in basso (dove prima c'era la navbar) */
+    /* Bottone Contatti: flottante e centrale in basso (dove prima c'era la navbar),
+       visibile solo in home. */
     .contact-fab {
-      display: block;
       top: auto;
       bottom: 16px;
       left: 50%;
       right: auto;
       transform: translateX(-50%);
     }
+    body.home-active .contact-fab { display: block; }
 
     .nav-items {
       display: flex;
@@ -802,9 +724,6 @@
       <button class="nav-item" data-target="contatti"><span class="nav-label">Contatti</span></button>
     </div>
   </div>
-  <button class="menu-toggle" id="menuToggle" aria-label="Apri menu">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-  </button>
 </nav>
 
 <!-- Bottone Contatti in alto a destra (solo mobile) -->
@@ -834,19 +753,6 @@
   </div>
 </div>
 
-<div class="mobile-menu" id="mobileMenu">
-  <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Chiudi menu">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
-  </button>
-  <nav class="mobile-menu-list">
-    <button class="mobile-menu-item" data-target="dual">Dual Finance</button>
-    <button class="mobile-menu-item" data-target="multiservice">MultiService</button>
-    <button class="mobile-menu-item" data-target="fastpay">FastPay</button>
-    <button class="mobile-menu-item" data-target="legal">Legal AI</button>
-
-    <button class="mobile-menu-item" data-target="contatti">Contatti</button>
-  </nav>
-</div>
 
 <div class="contact-menu" id="contactMenu">
   <div class="contact-name">Giulio Barboni</div>
@@ -1069,7 +975,6 @@
 <script>
   const navItems = document.querySelectorAll('.nav-item');
   const pageNavItems = document.querySelectorAll('.nav-item[data-target]:not([data-target="contatti"])');
-  const mobileMenuItems = document.querySelectorAll('.mobile-menu-item[data-target]');
   const allProjectTriggers = document.querySelectorAll('[data-target]:not([data-target="contatti"])');
   const panels = document.querySelectorAll('.project-panel');
   const topnav = document.querySelector('.topnav');
@@ -1174,12 +1079,6 @@
     btn.addEventListener('click', () => activateProject(btn.dataset.target));
   });
 
-  mobileMenuItems.forEach(btn => {
-    btn.addEventListener('click', () => {
-      activateProject(btn.dataset.target);
-      closeMobileMenu();
-    });
-  });
 
   document.querySelector('.logo').addEventListener('click', () => activateProject('home'));
 
@@ -1240,17 +1139,6 @@
   contactFab.addEventListener('click', openContactModal);
   contactModalClose.addEventListener('click', closeContactModal);
 
-  const menuToggle = document.getElementById('menuToggle');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const mobileMenuClose = document.getElementById('mobileMenuClose');
-
-  function closeMobileMenu() {
-    mobileMenu.classList.remove('open');
-  }
-
-  menuToggle.addEventListener('click', () => mobileMenu.classList.add('open'));
-  mobileMenuClose.addEventListener('click', closeMobileMenu);
-
   // Swipe orizzontale tra progetti (solo mobile). Swipe a sinistra -> progetto
   // successivo, a destra -> precedente. Attivo solo se si è su una pagina
   // progetto e il gesto è chiaramente orizzontale (non uno scroll verticale).
@@ -1266,7 +1154,6 @@
 
   document.addEventListener('touchend', (e) => {
     if (window.innerWidth > 1000) return;                 // solo mobile
-    if (mobileMenu.classList.contains('open')) return;
     if (contactMenu.classList.contains('open')) return;
 
     const active = document.querySelector('.project-panel.active');
@@ -1305,11 +1192,10 @@
 
   // Un click su questi elementi NON deve navigare (mantiene la loro interazione)
   function isInteractive(el) {
-    return !!(el && el.closest && el.closest('a, button, input, textarea, select, label, [role="button"], .topnav, .contact-menu, .mobile-menu'));
+    return !!(el && el.closest && el.closest('a, button, input, textarea, select, label, [role="button"], .topnav, .contact-menu'));
   }
   function anyMenuOpen() {
-    return contactMenu.classList.contains('open') ||
-           (typeof mobileMenu !== 'undefined' && mobileMenu.classList.contains('open'));
+    return contactMenu.classList.contains('open');
   }
   // Slide di destinazione per una direzione; null se siamo al bordo
   function targetFor(dir) {
