@@ -499,6 +499,9 @@
      pari al corner radius (24px), così l'angolo arrotondato resta pulito. */
   @media (pointer: coarse) and (max-width: 1000px) {
     .project-body-card { margin-top: -24px; }
+    /* Testo hero spostato giù di metà del gap (24px/2 = 12px) per ricentrarlo
+       otticamente rispetto all'area visibile ridotta dall'overlap della card. */
+    .hero-content { transform: translateY(12px); }
   }
   /* Handle stile bottom sheet in cima alla card (dispositivi <1000px):
      barretta arrotondata centrata, come i grabber di iOS/Material (rif. Mobbin). */
