@@ -1324,14 +1324,14 @@
     navCursor.classList.add('visible');
   }
   function onClick(e) {
+    if (!desktopPointer.matches) return;   // su touch: niente click-to-navigate (resta solo lo swipe)
     if (sliding || anyMenuOpen() || isInteractive(e.target)) return;
     const sel = window.getSelection();
     if (sel && sel.toString().length > 0) return;   // sta selezionando testo: non navigare
     const dir = dirFor(e.clientX);
     const tgt = targetFor(dir);
     if (!tgt) return;
-    // Su mobile/tablet (touch, <=1000px) il tap cambia slide in modo ISTANTANEO
-    // (niente animazione a carosello); lo swipe invece resta animato.
+    // Solo desktop (mouse): sotto i 1000px il cambio è ISTANTANEO, sopra è animato.
     if (window.innerWidth <= 1000) activateProject(tgt);
     else slideToProject(tgt, dir);
   }
