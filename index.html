@@ -382,7 +382,7 @@
     top: 0;
     z-index: 0;
     height: 100vh;
-    height: 100dvh;
+    height: 100svh;
     overflow: hidden;
     color: #fff;
     display: flex;
@@ -688,9 +688,9 @@
     }
     .contact-menu { min-width: 220px; }
     .hero-content { padding: 2rem 1.6rem; }
-    /* Hero a tutta altezza (100svh, valore fisso). La card sottostante spunta
-       comunque grazie all'overlap negativo (vedi regola touch). */
-    .project-hero-panel { height: 100vh; height: 100svh; }
+    /* Hero a 96svh sotto i 1000px (desktop resta 100svh). La card sottostante
+       spunta grazie all'overlap negativo (vedi regola touch). */
+    .project-hero-panel { height: 96vh; height: 96svh; }
     .project-body-wrap { padding: 2.4rem 1.4rem 3rem; }
     .project-cards { grid-template-columns: 1fr; }
     .project-row { gap: 0.5rem; padding: 1.4rem; }
