@@ -709,8 +709,8 @@
     line-height: 1.4;
     color: rgba(255, 255, 255, 0.65);
     text-align: center;
-    /* distanza tra le parole: ~120px su desktop, fluida per non uscire su mobile */
-    word-spacing: clamp(35px, 9vw, 120px);
+    /* distanza tra le parole: ~120px su desktop, fluida; minimo 44px su schermi stretti (mobile) */
+    word-spacing: clamp(44px, 9vw, 120px);
   }
 
   @media (max-width: 1000px) {
