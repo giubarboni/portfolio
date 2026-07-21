@@ -570,9 +570,9 @@
   /* ---------- Home ---------- */
   .home-panel {
     height: 100vh;
-    height: 100svh;   /* svh = viewport "piccolo" (barra URL visibile): altezza
-                         fissa che non cambia quando la barra mobile appare/scompare,
-                         così i contenuti centrati non "scattano" arrivando in home */
+    height: 100dvh;   /* dvh = altezza dinamica del viewport: riempie sempre lo
+                         schermo visibile, anche quando la barra del browser è
+                         collassata (la home non scrolla, quindi non "scatta"). */
     overflow: hidden;
     box-sizing: border-box;
     position: relative;
@@ -631,9 +631,9 @@
   }
 
   @media (max-width: 1000px) {
-    /* 100svh = altezza del viewport con la barra URL visibile: valore fisso,
-       la home non scrolla e non "scatta" quando la barra appare. 100vh fallback. */
-    .home-panel { height: 100vh; height: 100svh; min-height: 100vh; min-height: 100svh; padding: 0 16px; }
+    /* 100dvh = riempie sempre il viewport visibile (anche con barra collassata).
+       100vh come fallback per browser senza supporto dvh. */
+    .home-panel { height: 100vh; height: 100dvh; min-height: 100vh; min-height: 100dvh; padding: 0 16px; }
     .home-top { flex: 1; height: auto; padding: 1.5rem 0 5rem; }
   }
 
