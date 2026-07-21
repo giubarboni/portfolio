@@ -514,7 +514,7 @@
   }
 
   .project-hook {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     font-weight: 400;
     max-width: 40ch;
     opacity: 0.92;
@@ -541,7 +541,7 @@
   /* ---------- Scroll hint ---------- */
   .scroll-hint {
     position: absolute;
-    bottom: 2rem;
+    bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 3;
@@ -1307,10 +1307,10 @@
     }
   }, { passive: true });
 
-  // ---------- Navigazione a slide con click + cursore custom (solo desktop) ----------
+  // ---------- Navigazione a slide: click/tap su tutte le viewport, cursore custom solo desktop ----------
   // Metà sinistra dello schermo = progetto precedente, metà destra = successivo.
-  // L'ordine è quello della navbar (SWIPE_ORDER). Il cursore diventa un cerchio
-  // (stesso fill della navbar) con freccia sx/dx; sbiadita ai bordi.
+  // L'ordine è quello della navbar (SWIPE_ORDER). Su desktop il cursore diventa
+  // un cerchio (stesso fill della navbar) con freccia sx/dx; sbiadita ai bordi.
   const ARROW_LEFT  = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>';
   const ARROW_RIGHT = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
 
@@ -1346,7 +1346,7 @@
     navCursor.classList.add('visible');
   }
   function onClick(e) {
-    if (!navCursor || sliding || anyMenuOpen() || isInteractive(e.target)) return;
+    if (sliding || anyMenuOpen() || isInteractive(e.target)) return;
     const sel = window.getSelection();
     if (sel && sel.toString().length > 0) return;   // sta selezionando testo: non navigare
     const dir = dirFor(e.clientX);
@@ -1355,7 +1355,12 @@
   }
   const hideCursor = () => { if (navCursor) navCursor.classList.remove('visible'); };
 
-  function enableSlideNav() {
+  // La navigazione a click/tap vale su TUTTE le viewport (stessa logica del desktop)
+  document.addEventListener('click', onClick);
+
+  // Il cursore custom (cerchio con freccia) è solo desktop: crea l'elemento,
+  // segue il mouse e nasconde il cursore nativo.
+  function enableCursor() {
     if (navCursor) return;
     document.body.classList.add('nav-slide-active');
     navCursor = document.createElement('div');
@@ -1363,19 +1368,17 @@
     navCursor.setAttribute('aria-hidden', 'true');
     document.body.appendChild(navCursor);
     document.addEventListener('mousemove', onMove);
-    document.addEventListener('click', onClick);
     document.addEventListener('mouseleave', hideCursor);
   }
-  function disableSlideNav() {
+  function disableCursor() {
     if (!navCursor) return;
     document.body.classList.remove('nav-slide-active');
     document.removeEventListener('mousemove', onMove);
-    document.removeEventListener('click', onClick);
     document.removeEventListener('mouseleave', hideCursor);
     navCursor.remove(); navCursor = null; lastDir = null; lastDisabled = null;
   }
-  if (desktopPointer.matches) enableSlideNav();
-  desktopPointer.addEventListener('change', (ev) => ev.matches ? enableSlideNav() : disableSlideNav());
+  if (desktopPointer.matches) enableCursor();
+  desktopPointer.addEventListener('change', (ev) => ev.matches ? enableCursor() : disableCursor());
 
   // Collapse-on-scroll con isteresi: collassa facilmente scrollando in giù,
   // ma espande solo con uno scroll verso l'alto deciso. Così il piccolo
