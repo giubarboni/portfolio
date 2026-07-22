@@ -113,10 +113,34 @@
   }
   .nav-cursor.visible { opacity: 1; }
   .nav-cursor.disabled { opacity: 0.35; }   /* freccia sbiadita ai bordi (nessuna slide oltre) */
+  /* Variante "beam": I-beam custom, barra bianca con capi arrotondati,
+     sopra il testo di lettura. */
+  .nav-cursor.beam {
+    width: 2px; height: 20px; margin: -10px 0 0 -1px;
+    background: rgba(255, 255, 255, 0.5);
+    border: none; border-radius: 999px; box-shadow: none;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
 
-  /* Quando la navigazione a slide è attiva (desktop) nascondo il cursore nativo;
-     gli elementi interattivi mantengono il loro cursor:pointer e lo sovrascrivono. */
-  body.nav-slide-active { cursor: none; }
+  /* Cursore quando la navigazione a slide è attiva (desktop). Quattro stati:
+     - home / hero        → cerchio con freccia sx/dx (custom, qui si cambia slide)
+     - testo di lettura   → I-beam custom (barra verticale)
+     - navbar / cliccabili → pointer di SISTEMA (più robusto del custom)
+     - tutto il resto     → freccia di sistema (neutro) */
+  /* Base = cursore neutro: freccia di sistema (dove non si clicca, non c'è
+     testo e non si cambia slide). */
+  body.nav-slide-active { cursor: default; }
+  /* Home + hero: qui si cambia slide → cursore custom cerchio-freccia. */
+  body.nav-slide-active .home-panel,
+  body.nav-slide-active .project-hero-panel { cursor: none; }
+  /* Testo di lettura (solo gli elementi di testo): I-beam custom. */
+  body.nav-slide-active :is(.project-body-card, .contatti-page-inner)
+    :is(p, h1, h2, h3, h4, h5, h6, span, li, strong, em, small, time,
+        blockquote, figcaption, .project-row-label, .project-row-content) { cursor: none; }
+  /* Navbar / elementi cliccabili: pointer di sistema (più robusto del cursore custom). */
+  body.nav-slide-active .topnav,
+  body.nav-slide-active .topnav *,
+  body.nav-slide-active :is(a, button, [role="button"], summary, label) { cursor: pointer; }
 
   .logo {
     display: flex;
@@ -423,7 +447,7 @@
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    opacity: 0.72;
+    opacity: 0.62;
     margin: 0 0 1rem;
   }
 
@@ -432,14 +456,15 @@
     font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1;
+    opacity: 0.9;
     margin: 0 0 1rem;
   }
 
   .project-hook {
     font-size: 1rem;
-    font-weight: 400;
+    font-weight: 500;
     max-width: 40ch;
-    opacity: 0.92;
+    opacity: 0.82;
     margin: 0 0 2.2rem;
   }
 
@@ -584,6 +609,14 @@
     grid-column: 1 / -1;
   }
 
+  /* Immagini piccole affiancate (es. Legal AI): stessa altezza con ritaglio
+     pulito, così la riga si riempie senza "buchi" né deformazioni. */
+  .gallery img:not(.wide),
+  .gallery video:not(.wide) {
+    height: 100%;
+    object-fit: cover;
+  }
+
   /* ---------- Home ---------- */
   .home-panel {
     height: 100vh;
@@ -639,9 +672,9 @@
     margin: 0;
     font-family: 'Satoshi', -apple-system, Arial, sans-serif;
     font-size: 1.3rem;
-    font-weight: 400;
+    font-weight: 500;
     line-height: 1.4;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.85);
     text-align: center;
     /* distanza tra le parole: ~120px su desktop, fluida; minimo 44px su schermi stretti (mobile) */
     word-spacing: clamp(44px, 9vw, 120px);
@@ -742,7 +775,7 @@
 
 <nav class="topnav">
   <button class="logo" data-target="home" aria-label="Home - Giulio Barboni">
-    <svg viewBox="0 0 1045 463" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="1045" height="463" rx="231.5" fill="rgba(0,0,0,0.5)"/><path d="M769.355 134.652C713.073 134.652 679.16 174.217 679.16 233.048C679.16 293.256 715.96 328.004 769.716 328.004C814.091 328.004 849.808 306.329 849.808 256.099V248.874H762.5V218.942H883V356.216H853.416L850.891 322.499C836.82 344.174 805.072 360 766.829 360C692.87 360 642 309.082 642 232.36C642 156.671 693.231 103 770.076 103C827.079 103 871.455 134.308 880.114 182.13H842.593C832.852 150.478 803.99 134.652 769.355 134.652Z" fill="rgba(255,255,255,0.85)"/></svg>
+    <svg viewBox="0 0 1045 463" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="1045" height="463" rx="231.5" fill="rgba(0,0,0,0.5)"/><path d="M769.355 134.652C713.073 134.652 679.16 174.217 679.16 233.048C679.16 293.256 715.96 328.004 769.716 328.004C814.091 328.004 849.808 306.329 849.808 256.099V248.874H762.5V218.942H883V356.216H853.416L850.891 322.499C836.82 344.174 805.072 360 766.829 360C692.87 360 642 309.082 642 232.36C642 156.671 693.231 103 770.076 103C827.079 103 871.455 134.308 880.114 182.13H842.593C832.852 150.478 803.99 134.652 769.355 134.652Z" fill="#ffffff"/></svg>
   </button>
   <div class="nav-items">
     <div class="nav-items-inner">
@@ -970,8 +1003,8 @@
         <div class="gallery">
           <img class="wide" src="portfolio-assets/lextel-hero.jpeg" alt="Legal AI su laptop">
           <video class="wide" src="portfolio-assets/legal-salvataggio.mp4" autoplay loop muted playsinline></video>
-          <img src="portfolio-assets/lextel-detail.jpg" alt="Interfaccia Legal AI">
           <img class="wide" src="portfolio-assets/legal-mobile.jpg" alt="Legal AI su mobile">
+          <img src="portfolio-assets/lextel-detail.jpg" alt="Interfaccia Legal AI">
           <img src="portfolio-assets/legal-frame2.jpg" alt="Dettaglio interfaccia Legal AI">
         </div>
       </div>
@@ -1236,19 +1269,56 @@
   }
   const dirFor = (clientX) => clientX < window.innerWidth / 2 ? 'prev' : 'next';
 
+  // I-beam custom solo sopra elementi di TESTO dentro le aree di lettura
+  // (non su immagini, video o spazi vuoti della card).
+  const TEXT_SEL = 'p, h1, h2, h3, h4, h5, h6, span, li, strong, em, small, time, blockquote, figcaption, .project-row-label, .project-row-content';
+  function isReadingText(el) {
+    return !!(el && el.closest &&
+      el.closest('.project-body-card, .contatti-page-inner') &&
+      el.closest(TEXT_SEL));
+  }
+  // Aree dove si cambia slide: solo home e hero dei progetti.
+  function isNavZone(el) {
+    return !!(el && el.closest && el.closest('.home-panel, .project-hero-panel'));
+  }
   function onMove(e) {
     if (!navCursor) return;
     navCursor.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
-    if (sliding || anyMenuOpen() || isInteractive(e.target)) { navCursor.classList.remove('visible'); return; }
-    const dir = dirFor(e.clientX);
-    const disabled = targetFor(dir) === null;
-    if (dir !== lastDir) { navCursor.innerHTML = dir === 'prev' ? ARROW_LEFT : ARROW_RIGHT; lastDir = dir; }
-    if (disabled !== lastDisabled) { navCursor.classList.toggle('disabled', disabled); lastDisabled = disabled; }
-    navCursor.classList.add('visible');
+    if (sliding || anyMenuOpen()) { navCursor.classList.remove('visible'); return; }
+    // 1) Navbar / bottoni / link → pointer di sistema (nascondo il cursore custom).
+    if (isInteractive(e.target)) {
+      navCursor.classList.remove('visible', 'beam', 'disabled');
+      lastDir = null; lastDisabled = null;
+      return;
+    }
+    // 2) Testo di lettura → I-beam custom (barra verticale).
+    if (isReadingText(e.target)) {
+      if (!navCursor.classList.contains('beam')) {
+        navCursor.classList.add('beam');
+        navCursor.classList.remove('disabled');
+        navCursor.innerHTML = '';
+        lastDir = null; lastDisabled = null;
+      }
+      navCursor.classList.add('visible');
+      return;
+    }
+    // 3) Home + hero → cerchio con freccia sx/dx (qui il clic cambia slide).
+    if (isNavZone(e.target)) {
+      navCursor.classList.remove('beam');
+      const dir = dirFor(e.clientX);
+      const disabled = targetFor(dir) === null;
+      if (dir !== lastDir) { navCursor.innerHTML = dir === 'prev' ? ARROW_LEFT : ARROW_RIGHT; lastDir = dir; }
+      if (disabled !== lastDisabled) { navCursor.classList.toggle('disabled', disabled); lastDisabled = disabled; }
+      navCursor.classList.add('visible');
+      return;
+    }
+    // 4) Neutro (card non-testo, gallery, spazi) → nessun cursore custom: freccia di sistema.
+    navCursor.classList.remove('visible');
   }
   function onClick(e) {
     if (!desktopPointer.matches) return;   // su touch: niente click-to-navigate (resta solo lo swipe)
     if (sliding || anyMenuOpen() || isInteractive(e.target)) return;
+    if (!isNavZone(e.target)) return;   // il clic cambia slide solo in home/hero
     const sel = window.getSelection();
     if (sel && sel.toString().length > 0) return;   // sta selezionando testo: non navigare
     const dir = dirFor(e.clientX);
@@ -1295,6 +1365,10 @@
   const EXPAND_AFTER = 44;    // px in su per espandere (ignora il rimbalzo d'inerzia)
 
   window.addEventListener('scroll', () => {
+    // La navbar si anima (collassa/espande) durante lo scroll: se il mouse è
+    // fermo, il cerchio custom resterebbe visibile sotto la navbar (doppione
+    // col pointer). Lo nascondo qui; riappare al prossimo movimento se serve.
+    hideCursor();
     // Su mobile la navbar è una bottom-bar a icone: non collassa mai.
     if (window.innerWidth <= 1000) {
       if (topnav.classList.contains('collapsed')) topnav.classList.remove('collapsed');
