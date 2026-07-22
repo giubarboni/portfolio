@@ -149,7 +149,10 @@
   }
 
   /* Logo: parte "quadrata" è un FORO nella navbar (vedi .topnav::before);
-     il rect è trasparente (fill:none), resta visibile solo la "G" bianca. */
+     il rect è trasparente (fill:none), resta visibile solo la "G" bianca.
+     Nelle pagine prodotto invece NON è un foro: quadrato nero 0.75 pieno. */
+  body.product-active .topnav::before { -webkit-mask: none; mask: none; }
+  body.product-active .logo svg rect { fill: rgba(0, 0, 0, 0.5); }
 
   .nav-items {
     display: flex;
@@ -757,7 +760,7 @@
 
 <nav class="topnav">
   <button class="logo" data-target="home" aria-label="Home - Giulio Barboni">
-    <svg viewBox="0 0 1045 463" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="1045" height="463" rx="231.5" fill="none"/><path d="M769.355 134.652C713.073 134.652 679.16 174.217 679.16 233.048C679.16 293.256 715.96 328.004 769.716 328.004C814.091 328.004 849.808 306.329 849.808 256.099V248.874H762.5V218.942H883V356.216H853.416L850.891 322.499C836.82 344.174 805.072 360 766.829 360C692.87 360 642 309.082 642 232.36C642 156.671 693.231 103 770.076 103C827.079 103 871.455 134.308 880.114 182.13H842.593C832.852 150.478 803.99 134.652 769.355 134.652Z" fill="#FF3700"/></svg>
+    <svg viewBox="0 0 1045 463" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="1045" height="463" rx="231.5" fill="none"/><path d="M769.355 134.652C713.073 134.652 679.16 174.217 679.16 233.048C679.16 293.256 715.96 328.004 769.716 328.004C814.091 328.004 849.808 306.329 849.808 256.099V248.874H762.5V218.942H883V356.216H853.416L850.891 322.499C836.82 344.174 805.072 360 766.829 360C692.87 360 642 309.082 642 232.36C642 156.671 693.231 103 770.076 103C827.079 103 871.455 134.308 880.114 182.13H842.593C832.852 150.478 803.99 134.652 769.355 134.652Z" fill="rgba(255,255,255,0.85)"/></svg>
   </button>
   <div class="nav-items">
     <div class="nav-items-inner">
