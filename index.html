@@ -74,17 +74,31 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
+    isolation: isolate;
     display: flex;
     align-items: center;
     padding: 0.55rem;
     border-radius: 999px;
+    max-width: calc(100vw - 2rem);
+    transition: padding .9s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  /* Il "vetro" della navbar sta su ::before, così posso ritagliarci un foro
+     a forma di logo (maschera) senza toccare i figli (la "G" resta bianca).
+     Il foro taglia anche il backdrop-filter: si vede davvero la pagina dietro. */
+  .topnav::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    z-index: -1;
     background: rgba(78, 75, 69, 0.5);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-    max-width: calc(100vw - 2rem);
-    transition: padding .9s cubic-bezier(0.65, 0, 0.35, 1);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4000' height='400'%3E%3Cpath fill-rule='evenodd' fill='%23fff' d='M0 0H4000V400H0Z M25.8 8.8h42.74a17 17 0 0 1 0 34h-42.74a17 17 0 0 1 0-34z'/%3E%3C/svg%3E") 0 0 / auto no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4000' height='400'%3E%3Cpath fill-rule='evenodd' fill='%23fff' d='M0 0H4000V400H0Z M25.8 8.8h42.74a17 17 0 0 1 0 34h-42.74a17 17 0 0 1 0-34z'/%3E%3C/svg%3E") 0 0 / auto no-repeat;
   }
 
   /* Cursore custom per la navigazione a slide (solo desktop).
@@ -134,9 +148,8 @@
     display: block;
   }
 
-  /* Logo blu base #005DFD (home e Contatti). Solo le pagine prodotto lo
-     scuriscono a #004ED7. */
-  body.product-active .logo svg rect { fill: #004ED7; }
+  /* Logo: parte "quadrata" è un FORO nella navbar (vedi .topnav::before);
+     il rect è trasparente (fill:none), resta visibile solo la "G" bianca. */
 
   .nav-items {
     display: flex;
@@ -406,7 +419,8 @@
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: color-mix(in srgb, var(--accent) 72%, transparent);
+    background: color-mix(in srgb, color-mix(in srgb, var(--accent), #000 60%) 72%, transparent);
+    filter: saturate(1.5);
   }
 
   .hero-content {
@@ -623,7 +637,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 5rem 0 1.5rem;
+    padding: 5rem 0;
   }
 
   .home-stack {
@@ -743,7 +757,7 @@
 
 <nav class="topnav">
   <button class="logo" data-target="home" aria-label="Home - Giulio Barboni">
-    <svg viewBox="0 0 1045 463" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="1045" height="463" rx="231.5" fill="#005DFD"/><path d="M769.355 134.652C713.073 134.652 679.16 174.217 679.16 233.048C679.16 293.256 715.96 328.004 769.716 328.004C814.091 328.004 849.808 306.329 849.808 256.099V248.874H762.5V218.942H883V356.216H853.416L850.891 322.499C836.82 344.174 805.072 360 766.829 360C692.87 360 642 309.082 642 232.36C642 156.671 693.231 103 770.076 103C827.079 103 871.455 134.308 880.114 182.13H842.593C832.852 150.478 803.99 134.652 769.355 134.652Z" fill="white"/></svg>
+    <svg viewBox="0 0 1045 463" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><rect width="1045" height="463" rx="231.5" fill="none"/><path d="M769.355 134.652C713.073 134.652 679.16 174.217 679.16 233.048C679.16 293.256 715.96 328.004 769.716 328.004C814.091 328.004 849.808 306.329 849.808 256.099V248.874H762.5V218.942H883V356.216H853.416L850.891 322.499C836.82 344.174 805.072 360 766.829 360C692.87 360 642 309.082 642 232.36C642 156.671 693.231 103 770.076 103C827.079 103 871.455 134.308 880.114 182.13H842.593C832.852 150.478 803.99 134.652 769.355 134.652Z" fill="#FF3700"/></svg>
   </button>
   <div class="nav-items">
     <div class="nav-items-inner">
