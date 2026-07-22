@@ -101,7 +101,7 @@
     .carousel-dots {
       display: flex;
       position: fixed;
-      top: 82px;
+      top: 16px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 99;
@@ -778,17 +778,8 @@
   }
 
   @media (max-width: 1000px) {
-    .topnav {
-      top: 16px;
-      bottom: auto;
-      left: 16px;
-      right: 16px;
-      transform: none;
-      max-width: none;
-      justify-content: space-between;
-      padding: 0.55rem;
-      gap: 0.1rem;
-    }
+    /* Sotto i 1000px la navbar è sostituita dall'indicatore carosello (.carousel-dots). */
+    .topnav { display: none; }
     .contact-menu { min-width: 220px; }
     .hero-content { padding: 2rem 1.6rem; }
     /* Niente nudge "Scorri" nelle pagine progetto sotto i 1000px */
