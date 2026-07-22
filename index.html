@@ -48,6 +48,13 @@
     --c-dual: #6C3CE9;
     --c-fastpay: #E23F30;
     --c-legal: #1F6D4C;
+
+    /* Accent scuriti (solo per il velo hero): HSB con brightness ridotta
+       (−50 per i primi tre; −30 per Legal, già scuro) e saturazione +10 punti. */
+    --c-multiservice-dark: #001145;
+    --c-dual-dark: #29106A;
+    --c-fastpay-dark: #63120B;
+    --c-legal-dark: #062116;
   }
 
   * { box-sizing: border-box; }
@@ -428,9 +435,16 @@
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: color-mix(in srgb, color-mix(in srgb, var(--accent), #000 60%) 72%, transparent);
+    /* Un solo strato: velo del colore accent SCURITO (HSB brightness ridotta),
+       al 45%. Niente scrim nero separato. */
+    background: color-mix(in srgb, var(--accent-dark, var(--accent)) 65%, transparent);
     filter: saturate(1.5);
   }
+  /* Colore scurito del velo hero, per progetto. */
+  #multiservice { --accent-dark: var(--c-multiservice-dark); }
+  #dual { --accent-dark: var(--c-dual-dark); }
+  #fastpay { --accent-dark: var(--c-fastpay-dark); }
+  #legal { --accent-dark: var(--c-legal-dark); }
 
   .hero-content {
     position: relative;
