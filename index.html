@@ -88,7 +88,9 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    max-width: calc(100vw - 2rem);
+    /* riserva ai lati lo spazio del bottone freccia (1.4rem + 38px) + 16px di
+       stacco, per lato, così la navbar centrata non si avvicina mai a <16px dal bottone */
+    max-width: calc(100vw - 2 * (1.4rem + 38px + 16px));
   }
 
   /* Indicatore carosello (solo <1000px): 5 pallini su pill glass, sotto la navbar.
@@ -196,7 +198,7 @@
   .nav-items {
     display: flex;
     align-items: center;
-    padding: 9px;   /* uguale su tutti i lati; > del padding delle tab. Pill in hug (~44px) */
+    padding: 6px;   /* uguale su tutti i lati; pill in hug (~38px) */
     border-radius: 999px;
     background: rgba(78, 75, 69, 0.5);
     backdrop-filter: blur(20px) saturate(180%);
@@ -214,8 +216,8 @@
     top: 1.4rem;
     left: 1.4rem;
     z-index: 100;
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -229,7 +231,6 @@
     cursor: pointer;
   }
   body.home-active .nav-close { display: none; }
-  @media (max-width: 1000px) { .nav-close { display: none; } }
 
   .nav-items-inner {
     display: flex;
@@ -268,7 +269,7 @@
     font-size: 0.88rem;
     font-weight: 500;
     line-height: 1.15;   /* la label di nav non ha bisogno del 1.55 dei paragrafi */
-    padding: 5px 12px;   /* laterale più ampio per respiro (vince sul vincolo pill>tab) */
+    padding: 5px 16px;   /* più aria laterale nelle tab */
     border-radius: 999px;
     white-space: nowrap;
     cursor: pointer;
