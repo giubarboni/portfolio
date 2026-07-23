@@ -291,7 +291,7 @@
   /* Icone SVG dei progetti: nascoste su desktop, mostrate su mobile */
   .nav-icon {
     display: none;
-    height: 22px;
+    height: 20px;   /* solo mobile: leggermente più piccole per una navbar di ~42px */
     width: auto;   /* stessa altezza per tutte, larghezza secondo proporzione */
   }
 
@@ -806,7 +806,7 @@
     .nav-item {
       max-width: none;
       margin-left: 0;
-      padding: 0.5rem;
+      padding: 5px;   /* icona 20px + 10px padding = 30px; con pill 6px → navbar 42px */
       color: #fff;
     }
     .nav-item .nav-label { display: none; }
@@ -816,6 +816,9 @@
     /* icona bianca: opaca al 15% se non attiva, piena (100%) se attiva */
     .nav-item .nav-icon { opacity: 0.15; }
     .nav-item.active .nav-icon { opacity: 1; }
+
+    /* Bottone freccia allineato alla navbar mobile (42px vs 38px del desktop). */
+    .nav-close { width: 42px; height: 42px; }
   }
 
   @media (max-width: 1000px) {
