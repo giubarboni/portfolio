@@ -96,7 +96,7 @@
   .carousel-dots { display: none; }
   @media (max-width: 1000px) {
     .carousel-dots {
-      display: flex;
+      display: none;   /* nascosti momentaneamente (era: flex) — su mobile torna la navbar */
       position: fixed;
       top: 16px;
       left: 50%;
@@ -802,16 +802,6 @@
     }
     body.home-active .contact-fab { display: block; }
 
-    .nav-items {
-      display: flex;
-      flex: 1;
-      margin-left: 0.4rem;
-      overflow: visible;
-    }
-    .nav-items-inner {
-      flex: 1;
-      justify-content: space-around;
-    }
     .nav-item {
       max-width: none;
       margin-left: 0;
@@ -828,8 +818,6 @@
   }
 
   @media (max-width: 1000px) {
-    /* Sotto i 1000px la navbar è sostituita dall'indicatore carosello (.carousel-dots). */
-    .topnav { display: none; }
     .contact-menu { min-width: 220px; }
     .hero-content { padding: 2rem 1.6rem; }
     /* Niente nudge "Scorri" nelle pagine progetto sotto i 1000px */
@@ -1318,6 +1306,9 @@
   // successivo, a destra -> precedente. Attivo solo se si è su una pagina
   // progetto e il gesto è chiaramente orizzontale (non uno scroll verticale).
   const SWIPE_ORDER = ['home', 'dual', 'multiservice', 'fastpay', 'legal'];
+  // Carosello (swipe + slide): la home è ESCLUSA — ci si entra col link
+  // "portfolio", non scorrendo. Lo scorrimento vale solo tra i progetti.
+  const PROJECT_ORDER = SWIPE_ORDER.filter(id => id !== 'home');
   let swStartX = 0, swStartY = 0, swStartT = 0;
 
   document.addEventListener('touchstart', (e) => {
@@ -1332,8 +1323,8 @@
     if (contactMenu.classList.contains('open')) return;
 
     const active = document.querySelector('.project-panel.active');
-    const idx = active ? SWIPE_ORDER.indexOf(active.id) : -1;
-    if (idx === -1) return;                               // non su una pagina progetto
+    const idx = active ? PROJECT_ORDER.indexOf(active.id) : -1;
+    if (idx === -1) return;             // home o fuori dai progetti: niente swipe
 
     const t = e.changedTouches[0];
     const dx = t.clientX - swStartX;
@@ -1348,10 +1339,10 @@
     const vAbs = Math.abs(dx) / dt;                       // px/ms
     const duration = Math.min(0.52, Math.max(0.30, window.innerWidth / vAbs / 1000));
 
-    if (dx < 0 && idx < SWIPE_ORDER.length - 1) {
-      slideToProject(SWIPE_ORDER[idx + 1], 'next', duration);
+    if (dx < 0 && idx < PROJECT_ORDER.length - 1) {
+      slideToProject(PROJECT_ORDER[idx + 1], 'next', duration);
     } else if (dx > 0 && idx > 0) {
-      slideToProject(SWIPE_ORDER[idx - 1], 'prev', duration);
+      slideToProject(PROJECT_ORDER[idx - 1], 'prev', duration);
     }
   }, { passive: true });
 
@@ -1373,16 +1364,13 @@
     return contactMenu.classList.contains('open');
   }
   // Slide di destinazione per una direzione; null se siamo al bordo.
-  // Su DESKTOP la home è fuori dal carosello: ci si entra col link "portfolio"
-  // e si esce col logo. Lo slide vale solo tra i progetti. (Mobile: swipe usa
-  // SWIPE_ORDER completo, home inclusa — vedi touchend.)
-  const DESKTOP_SLIDE_ORDER = SWIPE_ORDER.filter(id => id !== 'home');
+  // La home è fuori dal carosello (desktop e mobile): usa PROJECT_ORDER.
   function targetFor(dir) {
     const active = document.querySelector('.project-panel.active');
-    const idx = active ? DESKTOP_SLIDE_ORDER.indexOf(active.id) : -1;
+    const idx = active ? PROJECT_ORDER.indexOf(active.id) : -1;
     if (idx === -1) return null;
-    if (dir === 'next') return idx < DESKTOP_SLIDE_ORDER.length - 1 ? DESKTOP_SLIDE_ORDER[idx + 1] : null;
-    return idx > 0 ? DESKTOP_SLIDE_ORDER[idx - 1] : null;
+    if (dir === 'next') return idx < PROJECT_ORDER.length - 1 ? PROJECT_ORDER[idx + 1] : null;
+    return idx > 0 ? PROJECT_ORDER[idx - 1] : null;
   }
   const dirFor = (clientX) => clientX < window.innerWidth / 2 ? 'prev' : 'next';
 
