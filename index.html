@@ -806,7 +806,7 @@
     .nav-item {
       max-width: none;
       margin-left: 0;
-      padding: 5px;   /* icona 20px + 10px padding = 30px; con pill 6px → navbar 42px */
+      padding: 5px 12px;   /* verticale 5px (navbar resta 42px), laterale più ampio */
       color: #fff;
     }
     .nav-item .nav-label { display: none; }
@@ -819,6 +819,8 @@
 
     /* Bottone freccia allineato alla navbar mobile (42px vs 38px del desktop). */
     .nav-close { width: 42px; height: 42px; }
+    /* ≥16px di gap col bottone (qui 42px): riserva lo spazio per lato. */
+    .topnav { max-width: calc(100vw - 2 * (1.4rem + 42px + 16px)); }
   }
 
   @media (max-width: 1000px) {
