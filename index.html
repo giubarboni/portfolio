@@ -260,6 +260,11 @@
   .project-nav svg { display: block; }
   .project-nav.disabled { opacity: 0.35; pointer-events: none; }
   body.product-active .project-nav { display: inline-flex; }
+  /* Sotto i 1000px il bottom sheet (card) spunta dal fondo di ~4svh + 24px
+     (hero 96svh + overlap -24px): metto i bottoni 24px SOPRA il suo bordo. */
+  @media (max-width: 1000px) {
+    .project-nav { bottom: calc(4svh + 48px); }
+  }
 
   .nav-items-inner {
     display: flex;
@@ -894,7 +899,7 @@
 
 <!-- Icon button "X" in alto a destra (solo desktop, pagine progetto): torna alla home -->
 <button class="nav-close" id="navClose" aria-label="Torna alla home">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+  <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 18V6L8 0L16 6V18H10V11H6V18H0Z" fill="currentColor"/></svg>
 </button>
 
 <!-- Navigazione tra progetti (mobile + desktop, solo pagine progetto): prev/next come lo swipe -->
