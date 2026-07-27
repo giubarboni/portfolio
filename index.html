@@ -55,6 +55,12 @@
     --c-dual-dark: #29106A;
     --c-fastpay-dark: #830A00;
     --c-legal-dark: #005C37;
+
+    /* Altezza condivisa (pagine progetto): home, ENG e navbar alti uguali. */
+    --nav-h: 40px;
+  }
+  @media (max-width: 1000px) {
+    :root { --nav-h: 44px; }
   }
 
   * { box-sizing: border-box; }
@@ -75,22 +81,20 @@
   }
 
   /* ---------- Top nav (floating glass pill) ---------- */
-  /* Navbar = contenitore trasparente: logo e voci sono due blocchi separati,
-     stessa altezza (align-items: stretch), staccati di 16px (gap).
-     Il "vetro" glass sta SOLO sulle voci (.nav-items). */
+  /* Navbar (pagine progetto): pill delle voci, centrata in alto. Home, ENG e
+     navbar condividono la stessa altezza (--nav-h) e lo stesso top → allineati. */
   .topnav {
     position: fixed;
     top: 1.4rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
-    --nav-h: 40px;   /* altezza condivisa: logo e pill delle voci (alti uguali) */
     display: flex;
     align-items: center;
     gap: 16px;
-    /* riserva ai lati lo spazio del bottone freccia (1.4rem + 38px) + 16px di
-       stacco, per lato, così la navbar centrata non si avvicina mai a <16px dal bottone */
-    max-width: calc(100vw - 2 * (1.4rem + 38px + 16px));
+    /* riserva ai lati lo spazio dei bottoni (1.4rem + --nav-h) + 16px di stacco,
+       così la navbar centrata non si avvicina mai a <16px dai bottoni */
+    max-width: calc(100vw - 2 * (1.4rem + var(--nav-h) + 16px));
   }
 
   /* Indicatore carosello (solo <1000px): 5 pallini su pill glass, sotto la navbar.
@@ -198,7 +202,8 @@
   .nav-items {
     display: flex;
     align-items: center;
-    padding: 6px;   /* uguale su tutti i lati; pill in hug (~38px) */
+    height: var(--nav-h);   /* stessa altezza di home ed ENG */
+    padding: 0 6px;
     border-radius: 999px;
     background: rgba(78, 75, 69, 0.5);
     backdrop-filter: blur(20px) saturate(180%);
@@ -208,28 +213,50 @@
     overflow: hidden;
   }
 
-  /* Icon button (casa) in alto a sinistra: stesso fill glass della navbar.
-     Torna alla home. Nelle pagine progetto (nascosto in home). */
-  .nav-close {
+  /* Ghost button: nessun fill; il fill glass (come la navbar) compare all'hover. */
+  .ghost-btn {
     position: fixed;
     top: 1.4rem;
-    left: 1.4rem;
     z-index: 100;
-    width: 38px;
-    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.15;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  .ghost-btn:hover {
     background: rgba(78, 75, 69, 0.5);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Home (alto sx): icona in cerchio. Nelle pagine progetto (nascosto in home). */
+  .nav-close {
+    left: 1.4rem;
+    width: var(--nav-h);
+    height: var(--nav-h);
     border-radius: 50%;
-    cursor: pointer;
   }
   body.home-active .nav-close { display: none; }
+
+  /* Entry point EN (alto dx): pill di testo. Solo pagine progetto. */
+  .eng-btn {
+    right: 1.4rem;
+    height: var(--nav-h);
+    padding: 0 14px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    display: none;
+  }
+  body.product-active .eng-btn { display: flex; }
 
   /* Bottoni "precedente"/"prossimo" in basso (pagine progetto, mobile+desktop):
      navigano tra i progetti come lo swipe. Stesso fill glass della navbar. */
@@ -260,10 +287,12 @@
   .project-nav svg { display: block; }
   .project-nav.disabled { opacity: 0.35; pointer-events: none; }
   body.product-active .project-nav { display: inline-flex; }
-  /* Sotto i 1000px il bottom sheet (card) spunta dal fondo di ~4svh + 24px
-     (hero 96svh + overlap -24px): metto i bottoni 24px SOPRA il suo bordo. */
+  /* Sotto i 1000px i bottoni vivono DENTRO la hero (absolute, spostati via JS
+     nella hero del progetto attivo): scorrono con la hero e la card sottostante
+     li copre invece di sovrapporsi. 48px dal fondo hero = 24px sopra il bordo
+     della card (che ha overlap -24px sulla hero). */
   @media (max-width: 1000px) {
-    .project-nav { bottom: calc(4svh + 48px); }
+    .project-nav { position: absolute; bottom: 48px; }
   }
 
   .nav-items-inner {
@@ -349,6 +378,8 @@
     font-weight: 500;
     cursor: pointer;
   }
+
+  .eng-fab { display: none; }
 
   .contact-modal {
     position: fixed;
@@ -837,6 +868,26 @@
     }
     body.home-active .contact-fab { display: block; }
 
+    /* ENG in home (mobile): speculare al Contatti, in alto al centro a 32px. */
+    .eng-fab {
+      position: fixed;
+      top: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: none;
+      border: none;
+      padding: 0;
+      color: #fff;
+      opacity: 0.5;
+      text-decoration: underline;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    body.home-active .eng-fab { display: block; }
+
     .nav-item {
       max-width: none;
       margin-left: 0;
@@ -850,11 +901,8 @@
     /* icona bianca: opaca al 15% se non attiva, piena (100%) se attiva */
     .nav-item .nav-icon { opacity: 0.15; }
     .nav-item.active .nav-icon { opacity: 1; }
-
-    /* Bottone freccia allineato alla navbar mobile (42px vs 38px del desktop). */
-    .nav-close { width: 42px; height: 42px; }
-    /* ≥16px di gap col bottone (qui 42px): riserva lo spazio per lato. */
-    .topnav { max-width: calc(100vw - 2 * (1.4rem + 42px + 16px)); }
+    /* Home, ENG e navbar prendono --nav-h (44px su mobile) e lo stesso top → allineati.
+       Il max-width della navbar usa --nav-h, quindi resta ≥16px dai bottoni. */
   }
 
   @media (max-width: 1000px) {
@@ -898,9 +946,11 @@
 </nav>
 
 <!-- Icon button "X" in alto a destra (solo desktop, pagine progetto): torna alla home -->
-<button class="nav-close" id="navClose" aria-label="Torna alla home">
+<!-- Home (alto sx) ed entry point lingua EN (alto dx): ghost buttons, pagine progetto -->
+<button class="nav-close ghost-btn" id="navClose" aria-label="Torna alla home">
   <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 18V6L8 0L16 6V18H10V11H6V18H0Z" fill="currentColor"/></svg>
 </button>
+<button class="eng-btn ghost-btn" id="engBtn" aria-label="English version">ENG</button>
 
 <!-- Navigazione tra progetti (mobile + desktop, solo pagine progetto): prev/next come lo swipe -->
 <button class="project-nav prev" id="projPrev" aria-label="Progetto precedente">
@@ -923,6 +973,9 @@
 
 <!-- Bottone Contatti in alto a destra (solo mobile) -->
 <button class="contact-fab" id="contactFab">Contatti</button>
+
+<!-- Entry point EN in home (solo mobile): speculare al Contatti, in alto al centro -->
+<button class="eng-fab" id="engFab" aria-label="English version">ENG</button>
 
 <!-- Modale contatti full screen (mobile) -->
 <div class="contact-modal" id="contactModal" aria-hidden="true">
@@ -1218,6 +1271,15 @@
     projPrev.classList.toggle('disabled', !n.prev);
     projNext.classList.toggle('disabled', !n.next);
   }
+  // Sposta i bottoni prev/next DENTRO la hero del progetto (per l'absolute su
+  // mobile; su desktop sono fixed e il parent non conta). Home/contatti: nessuna
+  // hero → restano dove sono (comunque nascosti fuori da product-active).
+  function placeProjectNav(target) {
+    if (!projPrev || !projNext) return;
+    const hero = document.getElementById(target) &&
+                 document.getElementById(target).querySelector('.project-hero-panel');
+    if (hero) { hero.appendChild(projPrev); hero.appendChild(projNext); }
+  }
 
   function activateProject(target) {
     allProjectTriggers.forEach(b => b.classList.remove('active'));
@@ -1226,6 +1288,7 @@
     document.getElementById(target).classList.add('active');
     updateDots(target);
     updateProjectNav(target);
+    placeProjectNav(target);
     contactMenu.classList.remove('open');
     contactBtn.classList.remove('active');
     document.body.classList.toggle('home-active', target === 'home');
@@ -1247,6 +1310,7 @@
     sliding = true;
     updateDots(target);         // pallino attivo aggiornato subito, non a fine animazione
     updateProjectNav(target);   // idem per i bottoni precedente/prossimo
+    placeProjectNav(target);    // i bottoni entrano nella hero in arrivo
     const scrollY = window.scrollY;
     const vw = window.innerWidth;
     const sign = dir === 'next' ? 1 : -1;   // next: entra da destra, esce a sinistra
