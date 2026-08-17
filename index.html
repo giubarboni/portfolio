@@ -1311,6 +1311,12 @@
     updateDots(target);         // pallino attivo aggiornato subito, non a fine animazione
     updateProjectNav(target);   // idem per i bottoni precedente/prossimo
     placeProjectNav(target);    // i bottoni entrano nella hero in arrivo
+    // icona topnav attiva + colore logo aggiornati subito, non a fine slide
+    allProjectTriggers.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.add('active'));
+    contactBtn.classList.remove('active');
+    document.body.classList.toggle('home-active', target === 'home');
+    document.body.classList.toggle('product-active', target !== 'home' && target !== 'contatti');
     const scrollY = window.scrollY;
     const vw = window.innerWidth;
     const sign = dir === 'next' ? 1 : -1;   // next: entra da destra, esce a sinistra
