@@ -1165,14 +1165,21 @@
     window.addEventListener('load', calibrateNavWidths);
   }
 
-  function activateProject(target) {
+  // Marcatori "attivi" della navbar (icona del progetto attivo, stato home):
+  // separati dalla parte strutturale così possono essere applicati SUBITO
+  // all'inizio dello slide, non a fine animazione.
+  function setActiveMarkers(target) {
     allProjectTriggers.forEach(b => b.classList.remove('active'));
-    panels.forEach(p => p.classList.remove('active'));
     document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.add('active'));
-    document.getElementById(target).classList.add('active');
-    contactMenu.classList.remove('open');
     contactBtn.classList.remove('active');
     document.body.classList.toggle('home-active', target === 'home');
+  }
+
+  function activateProject(target) {
+    setActiveMarkers(target);
+    panels.forEach(p => p.classList.remove('active'));
+    document.getElementById(target).classList.add('active');
+    contactMenu.classList.remove('open');
     window.scrollTo(0, 0);
   }
 
@@ -1194,6 +1201,7 @@
 
     document.body.classList.add('sliding');
     incoming.classList.add('active');
+    setActiveMarkers(target);   // icona navbar attiva subito, non a fine slide
 
     [outgoing, incoming].forEach(p => {
       p.style.position = 'fixed';
