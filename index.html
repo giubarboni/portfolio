@@ -940,25 +940,25 @@
       <button class="nav-item" data-target="multiservice" aria-label="UnipolService"><span class="nav-label">UnipolService</span><svg class="nav-icon" viewBox="0 0 522 384" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M520.399 355.732C525.908 368.908 516.228 383.445 501.947 383.445H20.022C5.74049 383.445 -3.93879 368.908 1.56932 355.732L145.136 12.2894C151.707 -3.43011 173.668 -4.25982 181.407 10.9191L243.166 132.057C250.586 146.612 271.382 146.612 278.802 132.058L340.563 10.9186C348.301 -4.26016 370.262 -3.43033 376.833 12.2892L520.399 355.732Z"/></svg></button>
       <button class="nav-item" data-target="fastpay" aria-label="Compass"><span class="nav-label">Compass</span><svg class="nav-icon" viewBox="0 0 385 385" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M385 125C385 136.046 376.046 145 365 145H310C298.954 145 290 153.954 290 165V185C290 196.046 298.954 205 310 205H365C376.046 205 385 213.954 385 225V277C385 288.046 376.046 297 365 297H310C298.954 297 290 305.954 290 317V365C290 376.046 281.046 385 270 385H20C8.9543 385 0 376.046 0 365V20C0 8.95431 8.95431 0 20 0H365C376.046 0 385 8.95431 385 20V125Z"/></svg></button>
       <button class="nav-item" data-target="legal" aria-label="Lextel AI"><span class="nav-label">Lextel AI</span><svg class="nav-icon" viewBox="0 0 385 385" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M233 0C244.046 0 253 8.95431 253 20V112C253 123.046 261.954 132 273 132H365C376.046 132 385 140.954 385 152V365C385 376.046 376.046 385 365 385H20C8.95431 385 0 376.046 0 365V20C0 8.95431 8.95431 0 20 0H233Z"/></svg></button>
-      <button class="nav-item" data-target="contatti"><span class="nav-label">Contatti</span></button>
+      <button class="nav-item" data-target="contatti"><span class="nav-label" data-i18n="ui.contatti">Contatti</span></button>
     </div>
   </div>
 </nav>
 
 <!-- Icon button "X" in alto a destra (solo desktop, pagine progetto): torna alla home -->
 <!-- Home (alto sx) ed entry point lingua EN (alto dx): ghost buttons, pagine progetto -->
-<button class="nav-close ghost-btn" id="navClose" aria-label="Torna alla home">
+<button class="nav-close ghost-btn" id="navClose" aria-label="Torna alla home" data-i18n-aria="aria.home">
   <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 18V6L8 0L16 6V18H10V11H6V18H0Z" fill="currentColor"/></svg>
 </button>
-<button class="eng-btn ghost-btn" id="engBtn" aria-label="English version">ENG</button>
+<button class="eng-btn ghost-btn" id="engBtn" aria-label="English version" data-i18n-aria="aria.lang">ENG</button>
 
 <!-- Navigazione tra progetti (mobile + desktop, solo pagine progetto): prev/next come lo swipe -->
-<button class="project-nav prev" id="projPrev" aria-label="Progetto precedente">
+<button class="project-nav prev" id="projPrev" aria-label="Progetto precedente" data-i18n-aria="aria.prev">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-  <span>precedente</span>
+  <span data-i18n="ui.precedente">precedente</span>
 </button>
-<button class="project-nav next" id="projNext" aria-label="Progetto successivo">
-  <span>prossimo</span>
+<button class="project-nav next" id="projNext" aria-label="Progetto successivo" data-i18n-aria="aria.next">
+  <span data-i18n="ui.prossimo">prossimo</span>
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
 </button>
 
@@ -972,14 +972,14 @@
 </div>
 
 <!-- Bottone Contatti in alto a destra (solo mobile) -->
-<button class="contact-fab" id="contactFab">Contatti</button>
+<button class="contact-fab" id="contactFab" data-i18n="ui.contatti">Contatti</button>
 
 <!-- Entry point EN in home (solo mobile): speculare al Contatti, in alto al centro -->
-<button class="eng-fab" id="engFab" aria-label="English version">ENG</button>
+<button class="eng-fab" id="engFab" aria-label="English version" data-i18n-aria="aria.lang">ENG</button>
 
 <!-- Modale contatti full screen (mobile) -->
 <div class="contact-modal" id="contactModal" aria-hidden="true">
-  <button class="contact-modal-close" id="contactModalClose" aria-label="Chiudi">
+  <button class="contact-modal-close" id="contactModalClose" aria-label="Chiudi" data-i18n-aria="aria.close">
     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="18" y1="6" x2="6" y2="18"></line></svg>
   </button>
   <div class="contact-modal-inner">
@@ -1033,38 +1033,38 @@
 
     <section class="project-panel" id="multiservice" style="--accent: var(--c-multiservice)">
       <div class="project-hero-panel">
-        <img class="hero-bg" src="portfolio-assets/unipol-hero.webp" alt="Piattaforma gestionale UnipolService">
+        <img class="hero-bg" src="portfolio-assets/unipol-hero.webp" alt="Piattaforma gestionale UnipolService" data-i18n-alt="alt.unipol.hero">
         <div class="hero-scrim"></div>
         <div class="hero-content">
-          <p class="project-eyebrow">Strategia • UX/UI</p>
+          <p class="project-eyebrow" data-i18n="unipol.eyebrow">Strategia • UX/UI</p>
           <h1 class="project-title">UnipolService</h1>
-          <p class="project-hook">Dal controllo alla fiducia: redesign di una piattaforma gestionale per carrozzerie convenzionate.</p>
+          <p class="project-hook" data-i18n="unipol.hook">Dal controllo alla fiducia: redesign di una piattaforma gestionale per carrozzerie convenzionate.</p>
         </div>
         <div class="scroll-hint" aria-hidden="true">
           <svg class="scroll-hint-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-          <span class="scroll-hint-label">Scorri</span>
+          <span class="scroll-hint-label" data-i18n="ui.scorri">Scorri</span>
         </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
         <div class="project-cards">
         <div class="project-row">
-          <div class="project-row-label">Brief</div>
-          <div class="project-row-content">Il cliente aveva bisogno del redesign del frontend della piattaforma gestionale per le carrozzerie convenzionate. Gli utenti la trovavano poco usabile e macchinosa, appesantita da controlli eccessivi che frustravano più che facilitare il lavoro.</div>
+          <div class="project-row-label" data-i18n="label.brief">Brief</div>
+          <div class="project-row-content" data-i18n="unipol.brief">Il cliente aveva bisogno del redesign del frontend della piattaforma gestionale per le carrozzerie convenzionate. Gli utenti la trovavano poco usabile e macchinosa, appesantita da controlli eccessivi che frustravano più che facilitare il lavoro.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Processo</div>
-          <div class="project-row-content">Ho analizzato la piattaforma con shadowing, interviste e un workshop. Il vero problema, però, è emerso fuori dalle interviste strutturate: parlando con un carrozziere dopo un'intervista, ho scoperto che i controlli richiesti facevano percepire lo strumento come un meccanismo di sorveglianza, non di lavoro. Da lì sono emerse una serie di valutazioni che alla fine costituiscono il vero valore aggiunto di questo progetto.</div>
+          <div class="project-row-label" data-i18n="label.processo">Processo</div>
+          <div class="project-row-content" data-i18n="unipol.processo">Ho analizzato la piattaforma con shadowing, interviste e un workshop. Il vero problema, però, è emerso fuori dalle interviste strutturate: parlando con un carrozziere dopo un'intervista, ho scoperto che i controlli richiesti facevano percepire lo strumento come un meccanismo di sorveglianza, non di lavoro. Da lì sono emerse una serie di valutazioni che alla fine costituiscono il vero valore aggiunto di questo progetto.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Risultato</div>
-          <div class="project-row-content">Ho semplificato architettura e flussi, ridotto il carico cognitivo e creato un canale di messaggistica diretto tra utenti e sala controllo. Il carico sul centro assistenza è calato in modo netto, gli utenti sono diventati più autonomi e la qualità dei dati inseriti è migliorata.</div>
+          <div class="project-row-label" data-i18n="label.risultato">Risultato</div>
+          <div class="project-row-content" data-i18n="unipol.risultato">Ho semplificato architettura e flussi, ridotto il carico cognitivo e creato un canale di messaggistica diretto tra utenti e sala controllo. Il carico sul centro assistenza è calato in modo netto, gli utenti sono diventati più autonomi e la qualità dei dati inseriti è migliorata.</div>
         </div>
         </div>
 
         <div class="gallery">
-          <img class="wide" src="portfolio-assets/unipol-hero.webp" alt="Piattaforma gestionale UnipolService">
-          <img class="wide" src="portfolio-assets/unipol-compare.webp" alt="Confronto tra concept e interfaccia finale, UnipolService">
+          <img class="wide" src="portfolio-assets/unipol-hero.webp" alt="Piattaforma gestionale UnipolService" data-i18n-alt="alt.unipol.hero">
+          <img class="wide" src="portfolio-assets/unipol-compare.webp" alt="Confronto tra concept e interfaccia finale, UnipolService" data-i18n-alt="alt.unipol.compare">
           <video class="wide" src="portfolio-assets/unipol-slider.mp4" autoplay loop muted playsinline></video>
           <video class="wide" src="portfolio-assets/unipol-flusso.mp4" autoplay loop muted playsinline></video>
         </div>
@@ -1075,41 +1075,41 @@
 
     <section class="project-panel" id="dual" style="--accent: var(--c-dual)">
       <div class="project-hero-panel">
-        <img class="hero-bg" src="portfolio-assets/dunk-hero.webp" alt="Identità visiva Dunk Finance">
+        <img class="hero-bg" src="portfolio-assets/dunk-hero.webp" alt="Identità visiva Dunk Finance" data-i18n-alt="alt.dunk.hero">
         <div class="hero-scrim"></div>
         <div class="hero-content">
-          <p class="project-eyebrow">Branding • UX/UI</p>
+          <p class="project-eyebrow" data-i18n="dunk.eyebrow">Branding • UX/UI</p>
           <h1 class="project-title">Dunk Finance</h1>
-          <p class="project-hook">Un'identità e un'app di microprestiti,<br>costruite da zero.</p>
+          <p class="project-hook" data-i18n="dunk.hook">Un'identità e un'app di microprestiti,<br>costruite da zero.</p>
         </div>
         <div class="scroll-hint" aria-hidden="true">
           <svg class="scroll-hint-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-          <span class="scroll-hint-label">Scorri</span>
+          <span class="scroll-hint-label" data-i18n="ui.scorri">Scorri</span>
         </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
         <div class="project-cards">
         <div class="project-row">
-          <div class="project-row-label">Brief</div>
-          <div class="project-row-content">Dunk Finance si proponeva come un servizio di microprestiti per un target 25-45 anni, con i flussi di backend già definiti. Serviva un'applicazione costruita sui bisogni reali del target, più due obiettivi secondari: un onboarding che favorisse la conversione dei prospect, e la creazione di un logo con relativa identità visiva.</div>
+          <div class="project-row-label" data-i18n="label.brief">Brief</div>
+          <div class="project-row-content" data-i18n="dunk.brief">Dunk Finance si proponeva come un servizio di microprestiti per un target 25-45 anni, con i flussi di backend già definiti. Serviva un'applicazione costruita sui bisogni reali del target, più due obiettivi secondari: un onboarding che favorisse la conversione dei prospect, e la creazione di un logo con relativa identità visiva.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Processo</div>
-          <div class="project-row-content">Analisi dei requisiti di business e dei flussi di backend, benchmark competitivo (finance e settori affini), proposta e approvazione dell'identità visiva, concept e architettura dell'informazione, UI design, prototipo, test con utenti reali, iterazione.</div>
+          <div class="project-row-label" data-i18n="label.processo">Processo</div>
+          <div class="project-row-content" data-i18n="dunk.processo">Analisi dei requisiti di business e dei flussi di backend, benchmark competitivo (finance e settori affini), proposta e approvazione dell'identità visiva, concept e architettura dell'informazione, UI design, prototipo, test con utenti reali, iterazione.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Risultato</div>
-          <div class="project-row-content">Dopo il progetto il cliente si è detto soddisfatto e in seguito abbiamo lavorato su altri progetti. Non era scontato: in diverse occasioni l'obiettivo di conversione ha spinto verso dark pattern ed è stato necessario difendere l'esperienza utente senza intaccare la soddisfazione del cliente.</div>
+          <div class="project-row-label" data-i18n="label.risultato">Risultato</div>
+          <div class="project-row-content" data-i18n="dunk.risultato">Dopo il progetto il cliente si è detto soddisfatto e in seguito abbiamo lavorato su altri progetti. Non era scontato: in diverse occasioni l'obiettivo di conversione ha spinto verso dark pattern ed è stato necessario difendere l'esperienza utente senza intaccare la soddisfazione del cliente.</div>
         </div>
         </div>
 
         <div class="gallery">
-          <img class="wide" src="portfolio-assets/dunk-hero.webp" alt="Identità visiva Dunk Finance">
+          <img class="wide" src="portfolio-assets/dunk-hero.webp" alt="Identità visiva Dunk Finance" data-i18n-alt="alt.dunk.hero">
           <video src="portfolio-assets/dual-boost.mp4" autoplay loop muted playsinline></video>
-          <img src="portfolio-assets/dunk-detail.jpg" alt="Tavola di brand identity Dunk Finance">
-          <img src="portfolio-assets/dual-app1.jpg" alt="Schermate app Dunk Finance">
-          <img class="wide" src="portfolio-assets/dual-app2.jpg" alt="Proposta UI Dunk Finance">
+          <img src="portfolio-assets/dunk-detail.jpg" alt="Tavola di brand identity Dunk Finance" data-i18n-alt="alt.dunk.detail">
+          <img src="portfolio-assets/dual-app1.jpg" alt="Schermate app Dunk Finance" data-i18n-alt="alt.dunk.app">
+          <img class="wide" src="portfolio-assets/dual-app2.jpg" alt="Proposta UI Dunk Finance" data-i18n-alt="alt.dunk.ui">
         </div>
       </div>
       </div>
@@ -1117,39 +1117,39 @@
 
     <section class="project-panel" id="fastpay" style="--accent: var(--c-fastpay)">
       <div class="project-hero-panel">
-        <img class="hero-bg" src="portfolio-assets/compass-hero.webp" alt="Area riservata Compass">
+        <img class="hero-bg" src="portfolio-assets/compass-hero.webp" alt="Area riservata Compass" data-i18n-alt="alt.compass.hero">
         <div class="hero-scrim"></div>
         <div class="hero-content">
-          <p class="project-eyebrow">UX/UI</p>
+          <p class="project-eyebrow" data-i18n="compass.eyebrow">UX/UI</p>
           <h1 class="project-title">Compass</h1>
-          <p class="project-hook">L'area riservata clienti, ripensata da zero insieme allo sviluppo.</p>
+          <p class="project-hook" data-i18n="compass.hook">L'area riservata clienti, ripensata da zero insieme allo sviluppo.</p>
         </div>
         <div class="scroll-hint" aria-hidden="true">
           <svg class="scroll-hint-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-          <span class="scroll-hint-label">Scorri</span>
+          <span class="scroll-hint-label" data-i18n="ui.scorri">Scorri</span>
         </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
         <div class="project-cards">
         <div class="project-row">
-          <div class="project-row-label">Brief</div>
-          <div class="project-row-content">Compass aveva bisogno di un redesign completo dell'area riservata clienti: definizione dell'architettura, progettazione delle pagine e handoff al team di sviluppo.</div>
+          <div class="project-row-label" data-i18n="label.brief">Brief</div>
+          <div class="project-row-content" data-i18n="compass.brief">Compass aveva bisogno di un redesign completo dell'area riservata clienti: definizione dell'architettura, progettazione delle pagine e handoff al team di sviluppo.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Processo</div>
-          <div class="project-row-content">Il processo ha seguito una metodologia Agile in parallelo allo sviluppo, che ho proposto di coinvolgere più a monte per far emergere per tempo i limiti tecnici. Questo ci ha permesso di bloccare sul nascere alcune feature che il PM avrebbe approvato ma che avrebbero richiesto uno sforzo di sviluppo sproporzionato.</div>
+          <div class="project-row-label" data-i18n="label.processo">Processo</div>
+          <div class="project-row-content" data-i18n="compass.processo">Il processo ha seguito una metodologia Agile in parallelo allo sviluppo, che ho proposto di coinvolgere più a monte per far emergere per tempo i limiti tecnici. Questo ci ha permesso di bloccare sul nascere alcune feature che il PM avrebbe approvato ma che avrebbero richiesto uno sforzo di sviluppo sproporzionato.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Risultato</div>
-          <div class="project-row-content">Siamo arrivati alla consegna con 2 settimane di anticipo, che abbiamo utilizzato per fare QA.</div>
+          <div class="project-row-label" data-i18n="label.risultato">Risultato</div>
+          <div class="project-row-content" data-i18n="compass.risultato">Siamo arrivati alla consegna con 2 settimane di anticipo, che abbiamo utilizzato per fare QA.</div>
         </div>
         </div>
 
         <div class="gallery">
-          <img class="wide" src="portfolio-assets/compass-hero.webp" alt="Area riservata Compass">
-          <img src="portfolio-assets/compass-mobile.webp" alt="Schermate mobile Compass">
-          <img src="portfolio-assets/compass-laptop.webp" alt="Interfaccia desktop Compass">
+          <img class="wide" src="portfolio-assets/compass-hero.webp" alt="Area riservata Compass" data-i18n-alt="alt.compass.hero">
+          <img src="portfolio-assets/compass-mobile.webp" alt="Schermate mobile Compass" data-i18n-alt="alt.compass.mobile">
+          <img src="portfolio-assets/compass-laptop.webp" alt="Interfaccia desktop Compass" data-i18n-alt="alt.compass.laptop">
           <video class="wide" src="portfolio-assets/compass-anim.mp4" autoplay loop muted playsinline></video>
         </div>
 
@@ -1160,41 +1160,41 @@
 
     <section class="project-panel" id="legal" style="--accent: var(--c-legal)">
       <div class="project-hero-panel">
-        <img class="hero-bg" src="portfolio-assets/lextel-hero.jpeg" alt="Lextel AI su laptop">
+        <img class="hero-bg" src="portfolio-assets/lextel-hero.jpeg" alt="Lextel AI su laptop" data-i18n-alt="alt.lextel.hero">
         <div class="hero-scrim"></div>
         <div class="hero-content">
-          <p class="project-eyebrow">UX/UI • Web Design</p>
+          <p class="project-eyebrow" data-i18n="lextel.eyebrow">UX/UI • Web Design</p>
           <h1 class="project-title">Lextel AI</h1>
-          <p class="project-hook">Un modello AI proprietario,<br>trasformato in prodotto per avvocati.</p>
+          <p class="project-hook" data-i18n="lextel.hook">Un modello AI proprietario,<br>trasformato in prodotto per avvocati.</p>
         </div>
         <div class="scroll-hint" aria-hidden="true">
           <svg class="scroll-hint-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
-          <span class="scroll-hint-label">Scorri</span>
+          <span class="scroll-hint-label" data-i18n="ui.scorri">Scorri</span>
         </div>
       </div>
       <div class="project-body-card">
       <div class="project-body-wrap">
         <div class="project-cards">
         <div class="project-row">
-          <div class="project-row-label">Brief</div>
-          <div class="project-row-content">Il cliente ci ha chiesto di usare un modello GPT sviluppato dalla mia azienda e di trasformarlo in un prodotto usabile da avvocati, di ogni tipologia. Il tool doveva permettere di cercare, salvare ed annotare fonti dalle principali banche dati di settore, e di usare l'AI per elaborarle in una bozza di atto.</div>
+          <div class="project-row-label" data-i18n="label.brief">Brief</div>
+          <div class="project-row-content" data-i18n="lextel.brief">Il cliente ci ha chiesto di usare un modello GPT sviluppato dalla mia azienda e di trasformarlo in un prodotto usabile da avvocati, di ogni tipologia. Il tool doveva permettere di cercare, salvare ed annotare fonti dalle principali banche dati di settore, e di usare l'AI per elaborarle in una bozza di atto.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Processo</div>
-          <div class="project-row-content">Ricerca e architettura dell'informazione erano già state definite da un altro team interno, con requisiti chiari. Il mio ruolo è stato costruire il design system, disegnare tutti i flussi della web app e supportare lo sviluppo in fase di implementazione. Ho curato anche la landing page di lancio.</div>
+          <div class="project-row-label" data-i18n="label.processo">Processo</div>
+          <div class="project-row-content" data-i18n="lextel.processo">Ricerca e architettura dell'informazione erano già state definite da un altro team interno, con requisiti chiari. Il mio ruolo è stato costruire il design system, disegnare tutti i flussi della web app e supportare lo sviluppo in fase di implementazione. Ho curato anche la landing page di lancio.</div>
         </div>
         <div class="project-row">
-          <div class="project-row-label">Risultato</div>
-          <div class="project-row-content">Lextel AI è stato uno dei primi prodotti SaaS di AI legale in Italia (2023). Il design system che ho costruito è ancora oggi alla base del prodotto, espanso nel tempo con nuovi componenti attraverso i rilasci successivi.</div>
+          <div class="project-row-label" data-i18n="label.risultato">Risultato</div>
+          <div class="project-row-content" data-i18n="lextel.risultato">Lextel AI è stato uno dei primi prodotti SaaS di AI legale in Italia (2023). Il design system che ho costruito è ancora oggi alla base del prodotto, espanso nel tempo con nuovi componenti attraverso i rilasci successivi.</div>
         </div>
         </div>
 
         <div class="gallery">
-          <img class="wide" src="portfolio-assets/lextel-hero.jpeg" alt="Lextel AI su laptop">
+          <img class="wide" src="portfolio-assets/lextel-hero.jpeg" alt="Lextel AI su laptop" data-i18n-alt="alt.lextel.hero">
           <video class="wide" src="portfolio-assets/legal-salvataggio.mp4" autoplay loop muted playsinline></video>
-          <img class="wide" src="portfolio-assets/legal-mobile.jpg" alt="Lextel AI su mobile">
-          <img src="portfolio-assets/lextel-detail.jpg" alt="Interfaccia Lextel AI">
-          <img src="portfolio-assets/legal-frame2.jpg" alt="Dettaglio interfaccia Lextel AI">
+          <img class="wide" src="portfolio-assets/legal-mobile.jpg" alt="Lextel AI su mobile" data-i18n-alt="alt.lextel.mobile">
+          <img src="portfolio-assets/lextel-detail.jpg" alt="Interfaccia Lextel AI" data-i18n-alt="alt.lextel.detail">
+          <img src="portfolio-assets/legal-frame2.jpg" alt="Dettaglio interfaccia Lextel AI" data-i18n-alt="alt.lextel.frame2">
         </div>
       </div>
       </div>
@@ -1784,5 +1784,127 @@
 })();
 </script>
 
+<script>
+// ---------------------------------------------------------------------------
+// Versione inglese — un file solo, nessuna copia della pagina.
+// L'italiano resta nell'HTML; l'inglese sta tutto qui sotto, in un posto solo.
+// Ogni elemento traducibile porta una chiave:
+//   data-i18n       → il contenuto dell'elemento
+//   data-i18n-alt   → il testo alternativo di un'immagine
+//   data-i18n-aria  → l'etichetta per gli screen reader
+// Per correggere una frase inglese si modifica SOLO questo blocco.
+// Il bottone ENG scrive ?lang=en nell'URL, quindi il link è condivisibile
+// e si apre già in inglese.
+// ---------------------------------------------------------------------------
+(function () {
+  var EN = {
+
+    /* ---- UnipolService ---- */
+    'unipol.eyebrow':   'Strategy • UX/UI',
+    'unipol.hook':      'From control to trust: redesigning a management platform for affiliated body shops.',
+    'unipol.brief':     'The client needed a frontend redesign of the management platform used by its affiliated body shops. Users found it clunky and hard to work with, weighed down by excessive checks that got in the way of the job instead of helping.',
+    'unipol.processo':  'I studied the platform through shadowing, interviews and a workshop. The real problem, though, surfaced outside the structured interviews: talking to a body shop owner after a session, I found that the checks being asked of them made the tool feel like a surveillance mechanism rather than something to work with. That opened up a set of considerations which, in the end, are the real value of this project.',
+    'unipol.risultato': 'I simplified the architecture and the flows, reduced cognitive load and opened a direct messaging channel between users and the control room. The load on the support centre dropped sharply, users became more self-sufficient and the quality of the data they entered improved.',
+
+    /* ---- Dunk Finance ---- */
+    'dunk.eyebrow':   'Branding • UX/UI',
+    'dunk.hook':      'A visual identity and a microloan app,<br>built from scratch.',
+    'dunk.brief':     'Dunk Finance was launching as a microloan service aimed at a 25-45 audience, with the backend flows already defined. What it needed was an app built around what that audience actually needs, plus two secondary goals: an onboarding flow that helped convert prospects, and a logo with a visual identity to go with it.',
+    'dunk.processo':  'Analysis of business requirements and backend flows, competitive benchmark (finance and adjacent sectors), proposal and sign-off of the visual identity, concept and information architecture, UI design, prototype, testing with real users, iteration.',
+    'dunk.risultato': 'The client was satisfied with the project and we went on to work together on others. That was not a given: on several occasions the conversion target pushed towards dark patterns, and the user experience had to be defended without damaging the relationship with the client.',
+
+    /* ---- Compass ---- */
+    'compass.eyebrow':   'UX/UI',
+    'compass.hook':      'The customer portal, rethought from scratch alongside engineering.',
+    'compass.brief':     'Compass needed a complete redesign of its customer portal: defining the architecture, designing the pages and handing off to the development team.',
+    'compass.processo':  'The work followed an Agile process running in parallel with development, which I pushed to bring in earlier so that technical limits would surface in time. That let us stop a few features at the outset — features the PM would have approved, but that would have cost a disproportionate amount of engineering effort.',
+    'compass.risultato': 'We reached delivery two weeks ahead of schedule, and used that time for QA.',
+
+    /* ---- Lextel AI ---- */
+    'lextel.eyebrow':   'UX/UI • Web Design',
+    'lextel.hook':      'A proprietary AI model,<br>turned into a product for lawyers.',
+    'lextel.brief':     'The client asked us to take a GPT model developed in-house at my company and turn it into a product any kind of lawyer could use. The tool had to let them search, save and annotate sources from the main legal databases, and use AI to work those sources into a draft legal document.',
+    'lextel.processo':  'Research and information architecture had already been defined by another internal team, with clear requirements. My role was to build the design system, design every flow in the web app and support development through implementation. I also looked after the launch landing page.',
+    'lextel.risultato': 'Lextel AI was one of the first legal AI SaaS products in Italy (2023). The design system I built still underpins the product today, extended over time with new components across later releases.',
+
+    /* ---- etichette ricorrenti ---- */
+    'label.brief':     'Brief',
+    'label.processo':  'Process',
+    'label.risultato': 'Outcome',
+
+    /* ---- interfaccia ---- */
+    'ui.contatti':   'Contact',
+    'ui.scorri':     'Scroll',
+    'ui.precedente': 'previous',
+    'ui.prossimo':   'next',
+
+    /* ---- etichette per screen reader ---- */
+    'aria.prev':  'Previous project',
+    'aria.next':  'Next project',
+    'aria.home':  'Back to home',
+    'aria.lang':  'Italian version',
+    'aria.close': 'Close',
+
+    /* ---- testi alternativi delle immagini ---- */
+    'alt.unipol.hero':    'UnipolService management platform',
+    'alt.unipol.compare': 'Concept and final interface side by side, UnipolService',
+    'alt.dunk.hero':      'Dunk Finance visual identity',
+    'alt.dunk.detail':    'Dunk Finance brand identity board',
+    'alt.dunk.app':       'Dunk Finance app screens',
+    'alt.dunk.ui':        'Dunk Finance UI proposal',
+    'alt.compass.hero':   'Compass customer portal',
+    'alt.compass.mobile': 'Compass mobile screens',
+    'alt.compass.laptop': 'Compass desktop interface',
+    'alt.lextel.hero':    'Lextel AI on a laptop',
+    'alt.lextel.mobile':  'Lextel AI on mobile',
+    'alt.lextel.detail':  'Lextel AI interface',
+    'alt.lextel.frame2':  'Lextel AI interface detail'
+  };
+
+  var engBtn = document.getElementById('engBtn');
+  var engFab = document.getElementById('engFab');
+
+  // L'italiano non è duplicato da nessuna parte: alla prima traduzione lo
+  // mettiamo da parte in data-it, così tornare indietro è esatto.
+  function apply(lang) {
+    var en = lang === 'en';
+    document.documentElement.lang = lang;
+
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      if (el.dataset.it === undefined) el.dataset.it = el.innerHTML;
+      el.innerHTML = en ? (EN[el.dataset.i18n] || el.dataset.it) : el.dataset.it;
+    });
+    document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+      if (el.dataset.itAlt === undefined) el.dataset.itAlt = el.getAttribute('alt');
+      el.setAttribute('alt', en ? (EN[el.dataset.i18nAlt] || el.dataset.itAlt) : el.dataset.itAlt);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+      if (el.dataset.itAria === undefined) el.dataset.itAria = el.getAttribute('aria-label');
+      el.setAttribute('aria-label', en ? (EN[el.dataset.i18nAria] || el.dataset.itAria) : el.dataset.itAria);
+    });
+
+    if (engBtn) engBtn.textContent = en ? 'ITA' : 'ENG';
+    if (engFab) engFab.textContent = en ? 'ITA' : 'ENG';
+  }
+
+  function setLang(lang) {
+    apply(lang);
+    var u = new URL(window.location.href);
+    if (lang === 'en') u.searchParams.set('lang', 'en');
+    else u.searchParams.delete('lang');
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  }
+
+  // Apertura diretta in inglese con ?lang=en
+  if (new URLSearchParams(window.location.search).get('lang') === 'en') apply('en');
+
+  [engBtn, engFab].forEach(function (b) {
+    if (!b) return;
+    b.addEventListener('click', function () {
+      setLang(document.documentElement.lang === 'en' ? 'it' : 'en');
+    });
+  });
+})();
+</script>
 </body>
 </html>
